@@ -1,3 +1,3 @@
 # meat-night
-Tracks Mateos Meat Night hosting and attendance.
+Tracking Mateo's Meat Night hosting and attendance.
 
