@@ -4,20 +4,22 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"os"
 
 	"github.com/wexel-nath/meat-night/pkg/api"
+	"github.com/wexel-nath/meat-night/pkg/config"
 )
 
 func main() {
+	config.Configure()
+
 	startServer()
 }
 
 func getListenAddress() string {
-	port := os.Getenv("PORT")
+	port := config.GetPort()
 
 	if len(port) == 0 {
-		log.Fatal("$PORT must be set")
+		log.Fatal("PORT must be set")
 	}
 
 	return ":" + port
