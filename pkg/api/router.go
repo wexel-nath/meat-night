@@ -3,17 +3,9 @@ package api
 import (
 	"net/http"
 
-	"github.com/wexel-nath/meat-night/pkg/logger"
-
 	"github.com/julienschmidt/httprouter"
+	"github.com/wexel-nath/meat-night/pkg/api/handler"
 )
-
-func healthzHandler(w http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
-	_, err := w.Write([]byte(`{"status":"ok"}`))
-	if err != nil {
-		logger.Error(err)
-	}
-}
 
 func GetRouter() *httprouter.Router {
 	router := httprouter.New()
@@ -36,7 +28,12 @@ func getRoutes() []route {
 		{
 			method:  http.MethodGet,
 			pattern: "/healthz",
-			handler: healthzHandler,
+			handler: handler.HealthzHandler,
+		},
+		{
+			method:  http.MethodGet,
+			pattern: "/upcoming-hosts",
+			handler: handler.UpcomingHostsHandler,
 		},
 	}
 }

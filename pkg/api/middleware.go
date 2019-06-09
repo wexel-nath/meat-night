@@ -3,9 +3,8 @@ package api
 import (
 	"net/http"
 
-	"github.com/wexel-nath/meat-night/pkg/logger"
-
 	"github.com/julienschmidt/httprouter"
+	"github.com/wexel-nath/meat-night/pkg/logger"
 )
 
 func middleware(handler httprouter.Handle) httprouter.Handle {
