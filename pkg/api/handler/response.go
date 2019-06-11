@@ -31,6 +31,7 @@ func writeJsonResponse(
 		return
 	}
 
+	resp.Header().Set("Content-Type", "application/json")
 	resp.WriteHeader(status)
 	resp.Write(bytes)
 }
