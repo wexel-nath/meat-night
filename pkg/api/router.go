@@ -35,5 +35,10 @@ func getRoutes() []route {
 			pattern: "/upcoming-hosts",
 			handler: handler.UpcomingHostsHandler,
 		},
+		{
+			method:  http.MethodGet,
+			pattern: "/mateos",
+			handler: handler.ListMateosHandler,
+		},
 	}
 }
