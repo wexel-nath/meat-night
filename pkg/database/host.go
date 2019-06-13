@@ -10,7 +10,7 @@ func SelectUpcomingHosts() []string {
 			` + strings.Join(mateoColumns, ", ") + `
 		FROM 
 			mateo
-			JOIN meat_night ON mateo.id = meat_night.host_id
+			JOIN dinner ON mateo.id = dinner.host_id
 	`
 
 	db.Query(query)

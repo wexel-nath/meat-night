@@ -17,7 +17,7 @@ func SelectAllMateos() ([]map[string]interface{}, error) {
 		FROM
 			mateo
 		ORDER BY
-			first_name
+			last_name
 	`
 
 	db := getConnection()

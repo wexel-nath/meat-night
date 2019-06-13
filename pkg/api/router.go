@@ -40,5 +40,10 @@ func getRoutes() []route {
 			pattern: "/mateos",
 			handler: handler.ListMateosHandler,
 		},
+		{
+			method:  http.MethodPost,
+			pattern: "/dinner",
+			handler: handler.CreateDinnerHandler,
+		},
 	}
 }

@@ -1,0 +1,6 @@
+
+CREATE TABLE IF NOT EXISTS guest(
+  id        SERIAL  PRIMARY KEY NOT NULL,
+  dinner_id INTEGER NOT NULL REFERENCES dinner(id),
+  guest_id  INTEGER NOT NULL REFERENCES mateo(id)
+);
