@@ -2,6 +2,7 @@ package database
 
 import (
 	"database/sql"
+	"strings"
 )
 
 func scanRowToMap(row *sql.Row, colNames []string) (map[string]interface{}, error) {
@@ -45,7 +46,15 @@ func colPointersToMap(columnNames []string, columnPointers []interface{}) map[st
 	m := make(map[string]interface{})
 	for i, colName := range columnNames {
 		val := columnPointers[i].(*interface{})
-		m[colName] = *val
+		m[maybeStripName(colName)] = *val
 	}
 	return m
+}
+
+func maybeStripName(colName string) string {
+	split := strings.Split(colName, "AS ")
+	if len(split) == 1 {
+		return colName
+	}
+	return split[len(split) - 1]
 }

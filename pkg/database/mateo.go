@@ -7,17 +7,29 @@ var (
 		"id",
 		"first_name",
 		"last_name",
+		"guest_count",
+		"host_count",
+		"guest_count::NUMERIC / host_count AS guest_ratio",
 	}
 )
 
 func SelectAllMateos() ([]map[string]interface{}, error) {
 	query := `
-		SELECT 
-			` + strings.Join(mateoColumns, ", ") + `
-		FROM
-			mateo
-		ORDER BY
-			last_name
+		WITH guest_counts AS (
+			SELECT   guest_id, COUNT(*) AS guest_count
+			FROM     guest
+			GROUP BY guest_id
+		),
+		host_counts AS (
+			SELECT   host_id, COUNT(*) AS host_count
+			FROM     dinner
+			GROUP BY host_id
+		)
+		SELECT ` + strings.Join(mateoColumns, ", ") + `
+		FROM      mateo m
+		LEFT JOIN guest_counts gc ON m.id = gc.guest_id
+		LEFT JOIN host_counts hc ON m.id = hc.host_id
+		ORDER BY  m.id;
 	`
 
 	db := getConnection()
