@@ -44,8 +44,7 @@ const (
 			first_name,
 			last_name,
 			guest_count,
-			host_count,
-			guest_count::NUMERIC \/ host_count AS guest_ratio
+			host_count
 		FROM      mateo m
 			LEFT JOIN guest_counts gc ON m.id = gc.guest_id
 			LEFT JOIN host_counts hc ON m.id = hc.host_id
@@ -106,15 +105,6 @@ func TestSelectAllMateos(t *testing.T) {
 		},
 	}
 
-	columns := []string{
-		"id",
-		"first_name",
-		"last_name",
-		"guest_count",
-		"host_count",
-		"guest_ratio",
-	}
-
 	for _, test := range tests {
 		t.Run(test.name, func(st *testing.T) {
 			dbMock := getMockDB(st)
@@ -123,7 +113,7 @@ func TestSelectAllMateos(t *testing.T) {
 			if test.mock.expectErr != nil {
 				query.WillReturnError(test.mock.expectErr)
 			} else {
-				mockRows := sqlmock.NewRows(columns)
+				mockRows := sqlmock.NewRows(mateoColumns)
 				for _, row := range test.mock.expectRows {
 					mockRows.AddRow(row...)
 				}

@@ -9,7 +9,6 @@ var (
 		"last_name",
 		"guest_count",
 		"host_count",
-		"guest_count::NUMERIC / host_count AS guest_ratio",
 	}
 )
 

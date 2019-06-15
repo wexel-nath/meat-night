@@ -2,7 +2,6 @@ package logic
 
 import (
 	"github.com/wexel-nath/meat-night/pkg/database"
-	"github.com/wexel-nath/meat-night/pkg/logger"
 	"github.com/wexel-nath/meat-night/pkg/model"
 )
 
@@ -11,8 +10,6 @@ func GetAllMateos() ([]model.Mateo, error) {
 	if err != nil {
 		return nil, err
 	}
-
-	logger.Info("%v", rows)
 
 	mateos := make([]model.Mateo, 0)
 	for _, row := range rows {
