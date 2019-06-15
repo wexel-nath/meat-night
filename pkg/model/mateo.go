@@ -3,6 +3,7 @@ package model
 import (
 	"database/sql/driver"
 	"fmt"
+	"time"
 )
 
 type Mateo struct {
@@ -41,8 +42,8 @@ func NewMateoFromMap(row map[string]interface{}) (Mateo, error) {
 	if mateo.HostCount > 0 {
 		mateo.GuestRatio = float64(mateo.GuestCount) / float64(mateo.HostCount)
 	}
-	if mateo.LastHostDate, ok = row["last_host_date"].(string); !ok {
-		mateo.LastHostDate = ""
+	if lastHostDate, ok := row["last_host_date"].(time.Time); ok {
+		mateo.LastHostDate = lastHostDate.Format(DateFormat)
 	}
 	if mateo.Attended, ok = row["attended"].(int64); !ok {
 		mateo.Attended = 0
