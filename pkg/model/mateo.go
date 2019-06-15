@@ -34,8 +34,11 @@ func NewMateoFromMap(row map[string]interface{}) (Mateo, error) {
 	if mateo.HostCount, ok = row["host_count"].(int64); !ok {
 		mateo.HostCount = 0
 	}
-	if mateo.GuestRatio, ok = row["guest_ratio"].(float64); !ok {
-		mateo.GuestRatio = 0
+	//if mateo.GuestRatio, ok = row["guest_ratio"].(float64); !ok {
+	//	mateo.GuestRatio = 0
+	//}
+	if mateo.HostCount > 0 {
+		mateo.GuestRatio = float64(mateo.GuestCount) / float64(mateo.HostCount)
 	}
 
 	return mateo, nil
