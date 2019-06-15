@@ -23,3 +23,8 @@ func getConnection() *sql.DB {
 	}
 	return connection
 }
+
+// SetMockConnection is used for testing only
+func SetMockConnection(db *sql.DB) {
+	connection = db
+}

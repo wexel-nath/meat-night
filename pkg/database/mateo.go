@@ -27,9 +27,9 @@ func SelectAllMateos() ([]map[string]interface{}, error) {
 		)
 		SELECT ` + strings.Join(mateoColumns, ", ") + `
 		FROM      mateo m
-		LEFT JOIN guest_counts gc ON m.id = gc.guest_id
-		LEFT JOIN host_counts hc ON m.id = hc.host_id
-		ORDER BY  m.id;
+			LEFT JOIN guest_counts gc ON m.id = gc.guest_id
+			LEFT JOIN host_counts hc ON m.id = hc.host_id
+		ORDER BY  m.id
 	`
 
 	db := getConnection()
