@@ -32,8 +32,8 @@ func getRoutes() []route {
 		},
 		{
 			method:  http.MethodGet,
-			pattern: "/upcoming-hosts",
-			handler: handler.UpcomingHostsHandler,
+			pattern: "/mateos-legacy",
+			handler: handler.ListMateosLegacyHandler,
 		},
 		{
 			method:  http.MethodGet,

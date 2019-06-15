@@ -6,7 +6,14 @@ import (
 )
 
 func GetAllMateos() ([]model.Mateo, error) {
-	rows, err := database.SelectAllMateos()
+	return getMateosFromRows(database.SelectAllMateos())
+}
+
+func GetAllMateosLegacy() ([]model.Mateo, error) {
+	return getMateosFromRows(database.SelectAllMateosLegacy())
+}
+
+func getMateosFromRows(rows []map[string]interface{}, err error) ([]model.Mateo,error) {
 	if err != nil {
 		return nil, err
 	}

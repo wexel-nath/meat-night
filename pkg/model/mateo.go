@@ -12,6 +12,10 @@ type Mateo struct {
 	GuestCount int64   `json:"guest_count"`
 	HostCount  int64   `json:"host_count"`
 	GuestRatio float64 `json:"guest_ratio"`
+
+	// Legacy Fields
+	LastHostDate string `json:"last_host_date"`
+	Attended     int64  `json:"attended"`
 }
 
 // NewMateoFromMap creates a Mateo from a database row
@@ -36,6 +40,12 @@ func NewMateoFromMap(row map[string]interface{}) (Mateo, error) {
 	}
 	if mateo.HostCount > 0 {
 		mateo.GuestRatio = float64(mateo.GuestCount) / float64(mateo.HostCount)
+	}
+	if mateo.LastHostDate, ok = row["last_host_date"].(string); !ok {
+		mateo.LastHostDate = ""
+	}
+	if mateo.Attended, ok = row["attended"].(int64); !ok {
+		mateo.Attended = 0
 	}
 
 	return mateo, nil
