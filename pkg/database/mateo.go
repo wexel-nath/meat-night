@@ -12,7 +12,7 @@ var (
 	}
 
 	mateoLegacyColumns = []string {
-		"id",
+		"mateo.id AS id",
 		"first_name",
 		"last_name",
 		"last_host_date",
