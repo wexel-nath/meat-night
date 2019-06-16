@@ -8,8 +8,8 @@ import (
 	"github.com/wexel-nath/meat-night/pkg/logic"
 )
 
-func ListMateosHandler(w http.ResponseWriter, _ *http.Request, ps httprouter.Params) {
-	method := ps.ByName("method")
+func ListMateosHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	method := r.URL.Query().Get("method")
 	mateos, err := logic.GetAllMateos(method)
 	if err != nil {
 		logger.Error(err)
