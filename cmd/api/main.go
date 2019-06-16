@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/wexel-nath/meat-night/pkg/initialize"
 	"log"
 	"net/http"
 
@@ -11,6 +12,7 @@ import (
 
 func main() {
 	config.Configure()
+	initialize.MaybeInsertDinners()
 
 	startServer()
 }
