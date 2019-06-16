@@ -27,13 +27,13 @@ func TestGetAllMateos(t *testing.T) {
 			mock: database.Mock{
 				ExpectQuery: database.SelectAllMateosExpectedQuery,
 				ExpectRows: []database.MockRow{
-					database.GetValues(model.TestJohn, ""),
+					database.GetValues(database.TestJohn, ""),
 				},
 			},
 			sort: "new",
 			want: want{
 				mateos: []model.Mateo{
-					model.TestJohn,
+					database.TestJohn,
 				},
 				err: nil,
 			},
@@ -43,13 +43,13 @@ func TestGetAllMateos(t *testing.T) {
 			mock: database.Mock{
 				ExpectQuery: database.SelectAllMateosLegacyExpectedQuery,
 				ExpectRows: []database.MockRow{
-					database.GetValues(model.TestBob, model.TypeLegacy),
+					database.GetValues(database.TestBob, model.TypeLegacy),
 				},
 			},
 			sort: model.TypeLegacy,
 			want: want{
 				mateos: []model.Mateo{
-					model.TestBob,
+					database.TestBob,
 				},
 				err: nil,
 			},
@@ -59,15 +59,15 @@ func TestGetAllMateos(t *testing.T) {
 			mock: database.Mock{
 				ExpectQuery: database.SelectAllMateosLegacyExpectedQuery,
 				ExpectRows: []database.MockRow{
-					database.GetValues(model.TestBob, model.TypeLegacy),
-					database.GetValues(model.TestDavid, model.TypeLegacy),
+					database.GetValues(database.TestBob, model.TypeLegacy),
+					database.GetValues(database.TestDavid, model.TypeLegacy),
 				},
 			},
 			sort: model.TypeLegacy,
 			want: want{
 				mateos: []model.Mateo{
-					model.TestBob,
-					model.TestDavid,
+					database.TestBob,
+					database.TestDavid,
 				},
 				err: nil,
 			},

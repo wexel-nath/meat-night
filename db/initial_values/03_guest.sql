@@ -1,5 +1,5 @@
 
-INSERT INTO guest (dinner_id, guest_id)
+INSERT INTO guest (dinner_id, mateo_id)
 VALUES
   (1, 1),
   (1, 2),

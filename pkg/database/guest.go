@@ -2,12 +2,12 @@ package database
 
 import "fmt"
 
-func InsertGuests(dinnerID int64, guestIDs []int64) error {
-	query := buildInsertGuestsQuery(len(guestIDs))
+func InsertGuests(dinnerID int64, mateoIDs []int64) error {
+	query := buildInsertGuestsQuery(len(mateoIDs))
 
-	ids := make([]interface{}, len(guestIDs))
-	for i, v := range guestIDs {
-		ids[i] = v
+	ids := make([]interface{}, len(mateoIDs))
+	for i, id := range mateoIDs {
+		ids[i] = id
 	}
 	params := append([]interface{}{ dinnerID }, ids...)
 
@@ -19,7 +19,7 @@ func InsertGuests(dinnerID int64, guestIDs []int64) error {
 func buildInsertGuestsQuery(numGuests int) string {
 	query := `
 		INSERT INTO guest(
-			dinner_id, guest_id
+			dinner_id, mateo_id
 		)
 		VALUES
 	`

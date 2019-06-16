@@ -23,12 +23,12 @@ func TestSelectAllMateos(t *testing.T) {
 			name: "Single Row Returned",
 			mock: Mock{
 				ExpectRows: []MockRow{
-					GetValues(model.TestJohn, ""),
+					GetValues(TestJohn, ""),
 				},
 			},
 			want: want{
 				mateoMap: []map[string]interface{}{
-					GetMap(model.TestJohn, ""),
+					GetMap(TestJohn, ""),
 				},
 				err: nil,
 			},
@@ -37,14 +37,14 @@ func TestSelectAllMateos(t *testing.T) {
 			name: "Multiple Rows Returned",
 			mock: Mock{
 				ExpectRows: []MockRow{
-					GetValues(model.TestJohn, ""),
-					GetValues(model.TestAdam, ""),
+					GetValues(TestJohn, ""),
+					GetValues(TestAdam, ""),
 				},
 			},
 			want: want{
 				mateoMap: []map[string]interface{}{
-					GetMap(model.TestJohn, ""),
-					GetMap(model.TestAdam, ""),
+					GetMap(TestJohn, ""),
+					GetMap(TestAdam, ""),
 				},
 				err: nil,
 			},

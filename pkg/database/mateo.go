@@ -10,20 +10,23 @@ func SelectAllMateos() ([]map[string]interface{}, error) {
 	columns := model.GetMateoColumns()
 	query := `
 		WITH guest_counts AS (
-			SELECT   guest_id, COUNT(*) AS guest_count
+			SELECT   mateo_id, COUNT(*) AS total_attended
 			FROM     guest
-			GROUP BY guest_id
+			GROUP BY mateo_id
 		),
 		host_counts AS (
-			SELECT   host_id, COUNT(*) AS host_count
+			SELECT   mateo_id, COUNT(*) AS total_hosted
 			FROM     dinner
-			GROUP BY host_id
+			GROUP BY mateo_id
 		)
-		SELECT ` + strings.Join(columns, ", ") + `
-		FROM      mateo m
-			LEFT JOIN guest_counts gc ON m.id = gc.guest_id
-			LEFT JOIN host_counts hc ON m.id = hc.host_id
-		ORDER BY  m.id
+		SELECT 
+			` + strings.Join(columns, ", ") + `
+		FROM
+			mateo
+			LEFT JOIN guest_counts USING (mateo_id)
+			LEFT JOIN host_counts USING (mateo_id)
+		ORDER BY
+			mateo_id
 	`
 
 	db := getConnection()
@@ -39,18 +42,23 @@ func SelectAllMateosLegacy() ([]map[string]interface{}, error) {
 	columns := model.GetMateoLegacyColumns()
 	query := `
 		WITH last_host AS (
-			SELECT   host_id, MAX(date) AS last_host_date
+			SELECT   mateo_id, MAX(date) AS last_host_date
 			FROM     dinner
-			GROUP BY host_id
+			GROUP BY mateo_id
 		)
-		SELECT ` + strings.Join(columns, ", ") + `
-		FROM   mateo
-			JOIN guest ON guest.guest_id = mateo.id
-			JOIN dinner ON dinner.id = guest.dinner_id
-			JOIN last_host ON last_host.host_id = mateo.id
-		WHERE  dinner.date > last_host_date
-		GROUP BY mateo.id, last_host_date
-		ORDER BY attended DESC, last_host_date
+		SELECT 
+			` + strings.Join(columns, ", ") + `
+		FROM
+			mateo
+			JOIN guest USING (mateo_id)
+			JOIN dinner USING (dinner_id)
+			JOIN last_host USING (mateo_id)
+		WHERE
+			dinner.date > last_host_date
+		GROUP BY
+			mateo_id, last_host_date
+		ORDER BY
+			attended DESC, last_host_date
 	`
 
 	db := getConnection()
@@ -60,4 +68,8 @@ func SelectAllMateosLegacy() ([]map[string]interface{}, error) {
 	}
 
 	return scanRowsToMap(rows, columns)
+}
+
+func SelectMateoByLastName(lastName string) (map[string]interface{}, error) {
+	return nil, nil
 }

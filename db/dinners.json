@@ -1,1 +1,20 @@
-{}
+[
+  {
+    "date": "18-10-18",
+    "venue": "Sendokgarpu",
+    "host": "Prasad",
+    "attended": ["Smith", "Brown", "Prasad"]
+  },
+  {
+    "date": "15-11-18",
+    "venue": "Taco Bell",
+    "host": "Welch",
+    "attended": ["Smith", "Brown", "Welch", "Prasad"]
+  },
+  {
+    "date": "22-11-18",
+    "venue": "Smith's Place",
+    "host": "Smith",
+    "attended": ["Smith", "Brown", "Welch"]
+  }
+]

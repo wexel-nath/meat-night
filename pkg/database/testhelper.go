@@ -3,57 +3,98 @@ package database
 import (
 	"database/sql"
 	"database/sql/driver"
-	"github.com/wexel-nath/meat-night/pkg/model"
 	"testing"
 	"time"
 
 	"github.com/DATA-DOG/go-sqlmock"
+	"github.com/wexel-nath/meat-night/pkg/model"
 )
 
 const (
 	SelectAllMateosExpectedQuery = `
 		WITH guest_counts AS \(
-			SELECT   guest_id, COUNT\(\*\) AS guest_count
+			SELECT   mateo_id, COUNT\(\*\) AS total_attended
 			FROM     guest
-			GROUP BY guest_id
+			GROUP BY mateo_id
 		\),
 		host_counts AS \(
-			SELECT   host_id, COUNT\(\*\) AS host_count
+			SELECT   mateo_id, COUNT\(\*\) AS total_hosted
 			FROM     dinner
-			GROUP BY host_id
+			GROUP BY mateo_id
 		\)
 		SELECT
-			id,
+			mateo_id,
 			first_name,
 			last_name,
-			guest_count,
-			host_count
-		FROM      mateo m
-			LEFT JOIN guest_counts gc ON m.id = gc.guest_id
-			LEFT JOIN host_counts hc ON m.id = hc.host_id
-		ORDER BY  m.id
+			total_attended,
+			total_hosted
+		FROM
+			mateo
+			LEFT JOIN guest_counts USING \(mateo_id\)
+			LEFT JOIN host_counts USING \(mateo_id\)
+		ORDER BY
+			mateo_id
 	`
 
 	SelectAllMateosLegacyExpectedQuery = `
 		WITH last_host AS \(
-			SELECT   host_id, MAX\(date\) AS last_host_date
+			SELECT   mateo_id, MAX\(date\) AS last_host_date
 			FROM     dinner
-			GROUP BY host_id
+			GROUP BY mateo_id
 		\)
 		SELECT
-			mateo.id AS id,
+			mateo_id,
 			first_name,
 			last_name,
 			last_host_date,
 			COUNT\(\*\) AS attended
-		FROM   mateo
-			JOIN guest ON guest.guest_id = mateo.id
-			JOIN dinner ON dinner.id = guest.dinner_id
-			JOIN last_host ON last_host.host_id = mateo.id
-		WHERE  dinner.date > last_host_date
-		GROUP BY mateo.id, last_host_date
-		ORDER BY attended DESC, last_host_date
+		FROM
+			mateo
+			JOIN guest USING \(mateo.id\)
+			JOIN dinner USING \(dinner_id\)
+			JOIN last_host USING \(mateo_id\)
+		WHERE
+			dinner.date > last_host_date
+		GROUP BY
+			mateo_id, last_host_date
+		ORDER BY
+			attended DESC, last_host_date
 	`
+)
+
+var (
+	TestJohn = model.Mateo{
+		ID:            1,
+		FirstName:     "John",
+		LastName:      "Doe",
+		TotalAttended: 5,
+		TotalHosted:   2,
+		GuestRatio:    2.5,
+	}
+	TestAdam = model.Mateo{
+		ID:            2,
+		FirstName:     "Adam",
+		LastName:      "Samuel",
+		TotalAttended: 4,
+		TotalHosted:   2,
+		GuestRatio:    2.0,
+	}
+
+	// Legacy
+	TestBob = model.Mateo{
+		ID:           3,
+		FirstName:    "Bob",
+		LastName:     "Jane",
+		LastHostDate: "12-05-19",
+		Attended:     4,
+	}
+	TestDavid = model.Mateo{
+		ID: 4,
+		FirstName:    "David",
+		LastName:     "Wilson",
+		LastHostDate: "01-06-19",
+		Attended:     1,
+	}
 )
 
 type MockRow []driver.Value
@@ -79,7 +120,6 @@ func setMockConnection(db *sql.DB) {
 	connection = db
 }
 
-
 func GetValues(mateo model.Mateo, sort string) []driver.Value {
 	values := []driver.Value{
 		mateo.ID,
@@ -97,8 +137,8 @@ func GetValues(mateo model.Mateo, sort string) []driver.Value {
 	} else {
 		values = append(
 			values,
-			mateo.GuestCount,
-			mateo.HostCount,
+			mateo.TotalAttended,
+			mateo.TotalHosted,
 		)
 	}
 
@@ -107,17 +147,17 @@ func GetValues(mateo model.Mateo, sort string) []driver.Value {
 
 func GetMap(mateo model.Mateo, sort string) map[string]interface{} {
 	m := map[string]interface{}{
-		"id":          mateo.ID,
-		"first_name":  mateo.FirstName,
-		"last_name":   mateo.LastName,
+		"mateo_id":   mateo.ID,
+		"first_name": mateo.FirstName,
+		"last_name":  mateo.LastName,
 	}
 
 	if sort == model.TypeLegacy {
 		m["last_host_date"] = mateo.LastHostDate
 		m["attended"] = mateo.Attended
 	} else {
-		m["guest_count"] = mateo.GuestCount
-		m["host_count"] = mateo.HostCount
+		m["total_attended"] = mateo.TotalAttended
+		m["total_hosted"] = mateo.TotalHosted
 	}
 
 	return m

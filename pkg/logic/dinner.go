@@ -22,3 +22,22 @@ func CreateDinner(dinner model.DinnerRequestDto) error {
 
 	return database.InsertGuests(dinnerID, dinner.GuestIDs)
 }
+
+func GetAllDinners() ([]model.Dinner, error) {
+	rows, err := database.SelectAllDinners()
+	if err != nil {
+		return nil, err
+	}
+
+	dinners := make([]model.Dinner, 0)
+	for _, row := range rows {
+		dinner, err := model.NewDinnerFromMap(row)
+		if err != nil {
+			return dinners, err
+		}
+
+		dinners = append(dinners, dinner)
+	}
+
+	return dinners, nil
+}
