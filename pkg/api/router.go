@@ -32,11 +32,6 @@ func getRoutes() []route {
 		},
 		{
 			method:  http.MethodGet,
-			pattern: "/mateos-legacy",
-			handler: handler.ListMateosLegacyHandler,
-		},
-		{
-			method:  http.MethodGet,
 			pattern: "/mateos",
 			handler: handler.ListMateosHandler,
 		},

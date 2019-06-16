@@ -50,7 +50,7 @@ func SelectAllMateos() ([]map[string]interface{}, error) {
 
 func SelectAllMateosLegacy() ([]map[string]interface{}, error) {
 	query := `
-		WITH host_turn AS (
+		WITH last_host AS (
 			SELECT   host_id, MAX(date) AS last_host_date
 			FROM     dinner
 			GROUP BY host_id
@@ -59,7 +59,7 @@ func SelectAllMateosLegacy() ([]map[string]interface{}, error) {
 		FROM   mateo
 			JOIN guest ON guest.guest_id = mateo.id
 			JOIN dinner ON dinner.id = guest.dinner_id
-			JOIN host_turn ON host_turn.host_id = mateo.id
+			JOIN last_host ON last_host.host_id = mateo.id
 		WHERE  dinner.date > last_host_date
 		GROUP BY mateo.id, last_host_date
 		ORDER BY attended DESC, last_host_date

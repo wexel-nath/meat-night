@@ -5,12 +5,17 @@ import (
 	"github.com/wexel-nath/meat-night/pkg/model"
 )
 
-func GetAllMateos() ([]model.Mateo, error) {
-	return getMateosFromRows(database.SelectAllMateos())
-}
+func GetAllMateos(method string) ([]model.Mateo, error) {
+	var rows []map[string]interface{}
+	var err error
 
-func GetAllMateosLegacy() ([]model.Mateo, error) {
-	return getMateosFromRows(database.SelectAllMateosLegacy())
+	if method == "legacy" {
+		rows, err = database.SelectAllMateosLegacy()
+	} else {
+		rows, err = database.SelectAllMateos()
+	}
+
+	return getMateosFromRows(rows, err)
 }
 
 func getMateosFromRows(rows []map[string]interface{}, err error) ([]model.Mateo,error) {
