@@ -72,16 +72,3 @@ func SelectAllMateosLegacy() ([]map[string]interface{}, error) {
 
 	return scanRowsToMap(rows, model.GetMateoSortLegacyColumns())
 }
-
-func SelectMateoByLastName(lastName string) (map[string]interface{}, error) {
-	columns := model.GetMateoColumns()
-	query := `
-		SELECT ` + strings.Join(columns, ", ") + `
-		FROM   mateo
-		WHERE  last_name = $1
-	`
-
-	db := getConnection()
-	row := db.QueryRow(query, lastName)
-	return scanRowToMap(row, columns)
-}

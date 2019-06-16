@@ -46,13 +46,6 @@ func NewDinnerFromMap(row map[string]interface{}) (Dinner, error) {
 	return dinner, nil
 }
 
-type DinnerRequestDto struct {
-	Date     string  `json:"date"`
-	HostID   int64   `json:"host_id"`
-	Venue    string  `json:"venue"`
-	GuestIDs []int64 `json:"guest_ids"`
-}
-
 func GetDinnerColumns() []string {
 	return dinnerColumns
 }

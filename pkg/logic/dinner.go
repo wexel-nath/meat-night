@@ -7,30 +7,14 @@ import (
 	"github.com/wexel-nath/meat-night/pkg/model"
 )
 
-// TODO: Validate dinner request
-func CreateDinner(dinner model.DinnerRequestDto) error {
-	date, err := time.Parse(model.DateFormat, dinner.Date)
-	if err != nil {
-		return err
-	}
-
-	// TODO: put these in a transaction so we can rollback if guests do not get inserted
-	dinnerID, err := database.InsertDinner(date, dinner.HostID, dinner.Venue)
-	if err != nil {
-		return err
-	}
-
-	return database.InsertGuests(dinnerID, dinner.GuestIDs)
-}
-
 // TODO: put these in a transaction so we can rollback if guests do not get inserted
-func CreateDinnerByLastNames(dinner model.Dinner) (model.Dinner, error) {
+func CreateDinner(dinner model.Dinner) (model.Dinner, error) {
 	date, err := time.Parse(model.DateFormat, dinner.Date)
 	if err != nil {
 		return dinner, err
 	}
 
-	row, err := database.InsertDinnerByLastName(date, dinner.Venue, dinner.Host)
+	row, err := database.InsertDinner(date, dinner.Venue, dinner.Host)
 	if err != nil {
 		return dinner, err
 	}
@@ -40,7 +24,7 @@ func CreateDinnerByLastNames(dinner model.Dinner) (model.Dinner, error) {
 		return newDinner, err
 	}
 
-	newDinner.Attended, err = database.InsertGuestsByLastName(newDinner.ID, dinner.Attended)
+	newDinner.Attended, err = database.InsertGuests(newDinner.ID, dinner.Attended)
 	return newDinner, err
 }
 

@@ -7,23 +7,6 @@ import (
 	"github.com/wexel-nath/meat-night/pkg/model"
 )
 
-func InsertDinner(date time.Time, mateoID int64, venue string) (int64, error) {
-	query := `
-		INSERT INTO dinner(
-			date, mateo_id, venue
-		)
-		VALUES
-			($1, $2, $3)
-		RETURNING 
-			id
-	`
-
-	db := getConnection()
-	var id int64
-	err := db.QueryRow(query, date, mateoID, venue).Scan(&id)
-	return id, err
-}
-
 func SelectAllDinners() ([]map[string]interface{}, error) {
 	columns := model.GetDinnerColumns()
 	query := `
@@ -42,7 +25,7 @@ func SelectAllDinners() ([]map[string]interface{}, error) {
 	return scanRowsToMap(rows, columns)
 }
 
-func InsertDinnerByLastName(date time.Time, venue string, lastName string) (map[string]interface{}, error) {
+func InsertDinner(date time.Time, venue string, lastName string) (map[string]interface{}, error) {
 	columns := model.GetDinnerColumns()
 	query := `
 		WITH insert_dinner AS (

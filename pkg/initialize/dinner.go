@@ -17,13 +17,10 @@ func MaybeInsertDinners() {
 		return
 	}
 	if len(existingDinners) > 0 {
-		logger.Info("Not Initializing Meat-Night")
 		return
 	}
 
 	logger.Info("Initializing Meat-Night from dinners.json")
-
-	// read json and populate
 	jsonFile, err := os.Open("db/dinners.json")
 	if err != nil {
 		logger.Error(err)
@@ -45,7 +42,7 @@ func MaybeInsertDinners() {
 	}
 
 	for _, dinner := range dinners {
-		_, err = logic.CreateDinnerByLastNames(dinner)
+		_, err = logic.CreateDinner(dinner)
 		if err != nil {
 			logger.Error(err)
 			return

@@ -21,7 +21,7 @@ func CreateDinnerHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Pa
 		return
 	}
 
-	var dinner model.DinnerRequestDto
+	var dinner model.Dinner
 	err = json.Unmarshal(body, &dinner)
 	if err != nil {
 		logger.Error(err)
@@ -30,7 +30,7 @@ func CreateDinnerHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Pa
 		return
 	}
 
-	err = logic.CreateDinner(dinner)
+	newDinner, err := logic.CreateDinner(dinner)
 	if err != nil {
 		logger.Error(err)
 		messages := []string { err.Error() }
@@ -38,6 +38,5 @@ func CreateDinnerHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Pa
 		return
 	}
 
-	// TODO: return created dinner object
-	w.WriteHeader(http.StatusCreated)
+	writeJsonResponse(w, newDinner, nil, http.StatusCreated)
 }
