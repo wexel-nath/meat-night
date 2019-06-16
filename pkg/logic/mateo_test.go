@@ -25,7 +25,8 @@ func TestGetAllMateos(t *testing.T) {
 		{
 			name: "Single Row Returned",
 			mock: database.Mock{
-				ExpectQuery: database.SelectAllMateosExpectedQuery,
+				ExpectQuery:   database.SelectAllMateosExpectedQuery,
+				ExpectColumns: model.GetMateoSortColumns(),
 				ExpectRows: []database.MockRow{
 					database.GetValues(database.TestJohn, ""),
 				},
@@ -41,7 +42,8 @@ func TestGetAllMateos(t *testing.T) {
 		{
 			name: "Single Row Returned - Legacy",
 			mock: database.Mock{
-				ExpectQuery: database.SelectAllMateosLegacyExpectedQuery,
+				ExpectQuery:   database.SelectAllMateosLegacyExpectedQuery,
+				ExpectColumns: model.GetMateoSortLegacyColumns(),
 				ExpectRows: []database.MockRow{
 					database.GetValues(database.TestBob, model.TypeLegacy),
 				},
@@ -57,7 +59,8 @@ func TestGetAllMateos(t *testing.T) {
 		{
 			name: "Multiple Rows Returned - Legacy",
 			mock: database.Mock{
-				ExpectQuery: database.SelectAllMateosLegacyExpectedQuery,
+				ExpectQuery:   database.SelectAllMateosLegacyExpectedQuery,
+				ExpectColumns: model.GetMateoSortLegacyColumns(),
 				ExpectRows: []database.MockRow{
 					database.GetValues(database.TestBob, model.TypeLegacy),
 					database.GetValues(database.TestDavid, model.TypeLegacy),
@@ -92,7 +95,7 @@ func TestGetAllMateos(t *testing.T) {
 			if test.mock.ExpectErr != nil {
 				query.WillReturnError(test.mock.ExpectErr)
 			} else {
-				mockRows := sqlmock.NewRows(model.GetMateoColumns())
+				mockRows := sqlmock.NewRows(test.mock.ExpectColumns)
 				for _, row := range test.mock.ExpectRows {
 					mockRows.AddRow(row...)
 				}

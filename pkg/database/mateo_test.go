@@ -69,7 +69,7 @@ func TestSelectAllMateos(t *testing.T) {
 			if test.mock.ExpectErr != nil {
 				query.WillReturnError(test.mock.ExpectErr)
 			} else {
-				mockRows := sqlmock.NewRows(model.GetMateoColumns())
+				mockRows := sqlmock.NewRows(model.GetMateoSortColumns())
 				for _, row := range test.mock.ExpectRows {
 					mockRows.AddRow(row...)
 				}

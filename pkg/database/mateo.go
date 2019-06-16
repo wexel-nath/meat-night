@@ -7,7 +7,7 @@ import (
 )
 
 func SelectAllMateos() ([]map[string]interface{}, error) {
-	columns := model.GetMateoColumns()
+	columns := model.GetMateoSortColumns()
 	query := `
 		WITH guest_counts AS (
 			SELECT   mateo_id, COUNT(*) AS total_attended
@@ -39,7 +39,6 @@ func SelectAllMateos() ([]map[string]interface{}, error) {
 }
 
 func SelectAllMateosLegacy() ([]map[string]interface{}, error) {
-	columns := model.GetMateoLegacyColumns()
 	query := `
 		WITH last_host AS (
 			SELECT   mateo_id, MAX(date) AS last_host_date
@@ -47,7 +46,11 @@ func SelectAllMateosLegacy() ([]map[string]interface{}, error) {
 			GROUP BY mateo_id
 		)
 		SELECT
-			` + strings.Join(columns, ", ") + `
+			mateo.mateo_id AS mateo_id,
+			first_name,
+			last_name,
+			last_host_date,
+			COUNT(*) AS attended
 		FROM
 			mateo
 			JOIN guest USING (mateo_id)
@@ -67,9 +70,18 @@ func SelectAllMateosLegacy() ([]map[string]interface{}, error) {
 		return nil, err
 	}
 
-	return scanRowsToMap(rows, columns)
+	return scanRowsToMap(rows, model.GetMateoSortLegacyColumns())
 }
 
 func SelectMateoByLastName(lastName string) (map[string]interface{}, error) {
-	return nil, nil
+	columns := model.GetMateoColumns()
+	query := `
+		SELECT ` + strings.Join(columns, ", ") + `
+		FROM   mateo
+		WHERE  last_name = $1
+	`
+
+	db := getConnection()
+	row := db.QueryRow(query, lastName)
+	return scanRowToMap(row, columns)
 }

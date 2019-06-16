@@ -17,15 +17,10 @@ func InsertDinner(date time.Time, mateoID int64, venue string) (int64, error) {
 		RETURNING 
 			id
 	`
-	params := []interface{}{
-		date,
-		mateoID,
-		venue,
-	}
 
 	db := getConnection()
 	var id int64
-	err := db.QueryRow(query, params...).Scan(&id)
+	err := db.QueryRow(query, date, mateoID, venue).Scan(&id)
 	return id, err
 }
 
@@ -45,4 +40,25 @@ func SelectAllDinners() ([]map[string]interface{}, error) {
 	}
 
 	return scanRowsToMap(rows, columns)
+}
+
+func InsertDinnerByLastName(date time.Time, venue string, lastName string) (map[string]interface{}, error) {
+	columns := model.GetDinnerColumns()
+	query := `
+		WITH insert_dinner AS (
+			INSERT INTO dinner (date, venue, mateo_id)
+				SELECT $1, $2, mateo_id
+				FROM mateo
+				WHERE last_name = $3
+				LIMIT 1
+			RETURNING *
+		)
+		SELECT ` + strings.Join(columns, ", ") + `
+		FROM insert_dinner
+			JOIN mateo USING (mateo_id);
+	`
+
+	db := getConnection()
+	row := db.QueryRow(query, date, venue, lastName)
+	return scanRowToMap(row, columns)
 }

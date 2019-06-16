@@ -14,14 +14,14 @@ var (
 		"mateo_id",
 		"first_name",
 		"last_name",
+	}
+
+	mateoSortColumns = []string{
 		"total_attended",
 		"total_hosted",
 	}
 
-	mateoLegacyColumns = []string{
-		"mateo.mateo_id AS mateo_id",
-		"first_name",
-		"last_name",
+	mateoSortLegacyColumns = []string{
 		"last_host_date",
 		"COUNT(*) AS attended",
 	}
@@ -79,6 +79,16 @@ func GetMateoColumns() []string {
 	return mateoColumns
 }
 
-func GetMateoLegacyColumns() []string {
-	return mateoLegacyColumns
+func GetMateoSortColumns() []string {
+	columns := make([]string, 0)
+	columns = append(columns, mateoColumns...)
+	columns = append(columns, mateoSortColumns...)
+	return columns
+}
+
+func GetMateoSortLegacyColumns() []string {
+	columns := make([]string, 0)
+	columns = append(columns, mateoColumns...)
+	columns = append(columns, mateoSortLegacyColumns...)
+	return columns
 }

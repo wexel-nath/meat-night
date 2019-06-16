@@ -19,11 +19,11 @@ var (
 )
 
 type Dinner struct {
-	ID     int64    `json:"dinner_id"`
-	Date   string   `json:"date"`
-	Venue  string   `json:"venue"`
-	Host   string   `json:"host"`
-	Guests []string `json:"guests"`
+	ID       int64    `json:"dinner_id"`
+	Date     string   `json:"date"`
+	Venue    string   `json:"venue"`
+	Host     string   `json:"host"`
+	Attended []string `json:"attended"`
 }
 
 func NewDinnerFromMap(row map[string]interface{}) (Dinner, error) {

@@ -100,9 +100,10 @@ var (
 type MockRow []driver.Value
 
 type Mock struct {
-	ExpectQuery string
-	ExpectRows  []MockRow
-	ExpectErr   error
+	ExpectQuery   string
+	ExpectColumns []string
+	ExpectRows    []MockRow
+	ExpectErr     error
 }
 
 func GetMockDB(t *testing.T) sqlmock.Sqlmock {

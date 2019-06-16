@@ -31,6 +31,22 @@ func scanRowsToMap(rows *sql.Rows, colNames []string) ([]map[string]interface{},
 	return s, nil
 }
 
+func scanSingleColumnToStringSlice(rows *sql.Rows) ([]string, error) {
+	col := []string{}
+
+	for rows.Next() {
+		var s string
+		err := rows.Scan(&s)
+		if err != nil {
+			return nil, err
+		}
+
+		col = append(col, s)
+	}
+
+	return col, nil
+}
+
 func colPointers(columnCount int) []interface{} {
 	// Create a slice of interface{}'s to represent each column,
 	// and a second slice to contain pointers to each item in the columns slice.
