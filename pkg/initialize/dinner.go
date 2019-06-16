@@ -24,7 +24,7 @@ func MaybeInsertDinners() {
 	logger.Info("Initializing Meat-Night from dinners.json")
 
 	// read json and populate
-	jsonFile, err := os.Open("../../db/dinners.json")
+	jsonFile, err := os.Open("db/dinners.json")
 	if err != nil {
 		logger.Error(err)
 		return
