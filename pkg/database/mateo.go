@@ -46,19 +46,19 @@ func SelectAllMateosLegacy() ([]map[string]interface{}, error) {
 			FROM     dinner
 			GROUP BY mateo_id
 		)
-		SELECT 
+		SELECT
 			` + strings.Join(columns, ", ") + `
 		FROM
 			mateo
 			JOIN guest USING (mateo_id)
 			JOIN dinner USING (dinner_id)
-			JOIN last_host USING (mateo_id)
+			JOIN last_host ON last_host.mateo_id = guest.mateo_id
 		WHERE
 			dinner.date > last_host_date
 		GROUP BY
-			mateo_id, last_host_date
+			mateo.mateo_id, last_host_date
 		ORDER BY
-			attended DESC, last_host_date
+			attended DESC, last_host_date;
 	`
 
 	db := getConnection()

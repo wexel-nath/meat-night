@@ -43,7 +43,7 @@ const (
 			GROUP BY mateo_id
 		\)
 		SELECT
-			mateo_id,
+			mateo.mateo_id AS mateo_id,
 			first_name,
 			last_name,
 			last_host_date,
@@ -52,11 +52,11 @@ const (
 			mateo
 			JOIN guest USING \(mateo.id\)
 			JOIN dinner USING \(dinner_id\)
-			JOIN last_host USING \(mateo_id\)
+			JOIN last_host ON last_host.mateo_id = guest.mateo_id
 		WHERE
 			dinner.date > last_host_date
 		GROUP BY
-			mateo_id, last_host_date
+			mateo.mateo_id, last_host_date
 		ORDER BY
 			attended DESC, last_host_date
 	`
