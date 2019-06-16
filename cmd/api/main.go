@@ -2,12 +2,12 @@ package main
 
 import (
 	"fmt"
-	"github.com/wexel-nath/meat-night/pkg/initialize"
 	"log"
 	"net/http"
 
 	"github.com/wexel-nath/meat-night/pkg/api"
 	"github.com/wexel-nath/meat-night/pkg/config"
+	"github.com/wexel-nath/meat-night/pkg/initialize"
 )
 
 func main() {

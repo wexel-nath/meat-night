@@ -2,11 +2,12 @@ package initialize
 
 import (
 	"encoding/json"
+	"io/ioutil"
+	"os"
+
 	"github.com/wexel-nath/meat-night/pkg/logger"
 	"github.com/wexel-nath/meat-night/pkg/logic"
 	"github.com/wexel-nath/meat-night/pkg/model"
-	"io/ioutil"
-	"os"
 )
 
 func MaybeInsertDinners() {
