@@ -1,26 +1,13 @@
 package database
 
-import "strings"
+import (
+	"strings"
 
-var (
-	mateoColumns = []string {
-		"id",
-		"first_name",
-		"last_name",
-		"guest_count",
-		"host_count",
-	}
-
-	mateoLegacyColumns = []string {
-		"mateo.id AS id",
-		"first_name",
-		"last_name",
-		"last_host_date",
-		"COUNT(*) AS attended",
-	}
+	"github.com/wexel-nath/meat-night/pkg/model"
 )
 
 func SelectAllMateos() ([]map[string]interface{}, error) {
+	columns := model.GetMateoColumns()
 	query := `
 		WITH guest_counts AS (
 			SELECT   guest_id, COUNT(*) AS guest_count
@@ -32,7 +19,7 @@ func SelectAllMateos() ([]map[string]interface{}, error) {
 			FROM     dinner
 			GROUP BY host_id
 		)
-		SELECT ` + strings.Join(mateoColumns, ", ") + `
+		SELECT ` + strings.Join(columns, ", ") + `
 		FROM      mateo m
 			LEFT JOIN guest_counts gc ON m.id = gc.guest_id
 			LEFT JOIN host_counts hc ON m.id = hc.host_id
@@ -45,17 +32,18 @@ func SelectAllMateos() ([]map[string]interface{}, error) {
 		return nil, err
 	}
 
-	return scanRowsToMap(rows, mateoColumns)
+	return scanRowsToMap(rows, columns)
 }
 
 func SelectAllMateosLegacy() ([]map[string]interface{}, error) {
+	columns := model.GetMateoLegacyColumns()
 	query := `
 		WITH last_host AS (
 			SELECT   host_id, MAX(date) AS last_host_date
 			FROM     dinner
 			GROUP BY host_id
 		)
-		SELECT ` + strings.Join(mateoLegacyColumns, ", ") + `
+		SELECT ` + strings.Join(columns, ", ") + `
 		FROM   mateo
 			JOIN guest ON guest.guest_id = mateo.id
 			JOIN dinner ON dinner.id = guest.dinner_id
@@ -71,5 +59,5 @@ func SelectAllMateosLegacy() ([]map[string]interface{}, error) {
 		return nil, err
 	}
 
-	return scanRowsToMap(rows, mateoLegacyColumns)
+	return scanRowsToMap(rows, columns)
 }

@@ -1,15 +1,20 @@
 package model
 
 import (
-	"database/sql/driver"
 	"fmt"
 	"time"
+)
+
+const (
+	TypeLegacy = "legacy"
 )
 
 type Mateo struct {
 	ID         int64   `json:"id"`
 	FirstName  string  `json:"first_name"`
 	LastName   string  `json:"last_name"`
+
+	// Fields for new sorting method
 	GuestCount int64   `json:"guest_count"`
 	HostCount  int64   `json:"host_count"`
 	GuestRatio float64 `json:"guest_ratio"`
@@ -53,6 +58,32 @@ func NewMateoFromMap(row map[string]interface{}) (Mateo, error) {
 }
 
 var (
+	mateoColumns = []string{
+		"id",
+		"first_name",
+		"last_name",
+		"guest_count",
+		"host_count",
+	}
+
+	mateoLegacyColumns = []string{
+		"mateo.id AS id",
+		"first_name",
+		"last_name",
+		"last_host_date",
+		"COUNT(*) AS attended",
+	}
+)
+
+func GetMateoColumns() []string {
+	return mateoColumns
+}
+
+func GetMateoLegacyColumns() []string {
+	return mateoLegacyColumns
+}
+
+var (
 	TestJohn = Mateo{
 		ID:         1,
 		FirstName:  "John",
@@ -61,7 +92,6 @@ var (
 		HostCount:  2,
 		GuestRatio: 2.5,
 	}
-
 	TestAdam = Mateo{
 		ID:         2,
 		FirstName:  "Adam",
@@ -70,24 +100,20 @@ var (
 		HostCount:  2,
 		GuestRatio: 2.0,
 	}
+
+	// Legacy
+	TestBob = Mateo{
+		ID:           3,
+		FirstName:    "Bob",
+		LastName:     "Jane",
+		LastHostDate: "12-05-19",
+		Attended:     4,
+	}
+	TestDavid= Mateo{
+		ID: 4,
+		FirstName:    "David",
+		LastName:     "Wilson",
+		LastHostDate: "01-06-19",
+		Attended:     1,
+	}
 )
-
-func (mateo Mateo) ToRow() []driver.Value {
-	return []driver.Value{
-		mateo.ID,
-		mateo.FirstName,
-		mateo.LastName,
-		mateo.GuestCount,
-		mateo.HostCount,
-	}
-}
-
-func (mateo Mateo) ToMap() map[string]interface{} {
-	return map[string]interface{}{
-		"id":          mateo.ID,
-		"first_name":  mateo.FirstName,
-		"last_name":   mateo.LastName,
-		"guest_count": mateo.GuestCount,
-		"host_count":  mateo.HostCount,
-	}
-}

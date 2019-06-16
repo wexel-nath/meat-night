@@ -9,7 +9,7 @@ func GetAllMateos(method string) ([]model.Mateo, error) {
 	var rows []map[string]interface{}
 	var err error
 
-	if method == "legacy" {
+	if method == model.TypeLegacy {
 		rows, err = database.SelectAllMateosLegacy()
 	} else {
 		rows, err = database.SelectAllMateos()
