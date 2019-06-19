@@ -49,6 +49,7 @@ func SelectAllMateosLegacy() ([]map[string]interface{}, error) {
 			mateo.mateo_id AS mateo_id,
 			first_name,
 			last_name,
+			email,
 			last_host_date,
 			COUNT(*) AS attended
 		FROM

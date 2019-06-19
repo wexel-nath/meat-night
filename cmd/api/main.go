@@ -7,12 +7,14 @@ import (
 
 	"github.com/wexel-nath/meat-night/pkg/api"
 	"github.com/wexel-nath/meat-night/pkg/config"
+	"github.com/wexel-nath/meat-night/pkg/email"
 	"github.com/wexel-nath/meat-night/pkg/initialize"
 )
 
 func main() {
 	config.Configure()
 	initialize.MaybeInsertDinners()
+	email.ConfigureClient()
 
 	startServer()
 }

@@ -26,6 +26,7 @@ const (
 			mateo_id,
 			first_name,
 			last_name,
+			email,
 			total_attended,
 			total_hosted
 		FROM
@@ -46,6 +47,7 @@ const (
 			mateo.mateo_id AS mateo_id,
 			first_name,
 			last_name,
+			email,
 			last_host_date,
 			COUNT\(\*\) AS attended
 		FROM
@@ -67,6 +69,7 @@ var (
 		ID:            1,
 		FirstName:     "John",
 		LastName:      "Doe",
+		Email:         "john.doe@example.com",
 		TotalAttended: 5,
 		TotalHosted:   2,
 		GuestRatio:    2.5,
@@ -75,6 +78,7 @@ var (
 		ID:            2,
 		FirstName:     "Adam",
 		LastName:      "Samuel",
+		Email:         "adam.samuel@example.com",
 		TotalAttended: 4,
 		TotalHosted:   2,
 		GuestRatio:    2.0,
@@ -85,6 +89,7 @@ var (
 		ID:           3,
 		FirstName:    "Bob",
 		LastName:     "Jane",
+		Email:        "bob.jane@example.com",
 		LastHostDate: "12-05-19",
 		Attended:     4,
 	}
@@ -92,6 +97,7 @@ var (
 		ID: 4,
 		FirstName:    "David",
 		LastName:     "Wilson",
+		Email:        "david.wilson@example.com",
 		LastHostDate: "01-06-19",
 		Attended:     1,
 	}
@@ -126,6 +132,7 @@ func GetValues(mateo model.Mateo, sort string) []driver.Value {
 		mateo.ID,
 		mateo.FirstName,
 		mateo.LastName,
+		mateo.Email,
 	}
 
 	if sort == model.TypeLegacy {
@@ -151,6 +158,7 @@ func GetMap(mateo model.Mateo, sort string) map[string]interface{} {
 		"mateo_id":   mateo.ID,
 		"first_name": mateo.FirstName,
 		"last_name":  mateo.LastName,
+		"email":      mateo.Email,
 	}
 
 	if sort == model.TypeLegacy {

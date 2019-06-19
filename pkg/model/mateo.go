@@ -14,6 +14,7 @@ var (
 		"mateo_id",
 		"first_name",
 		"last_name",
+		"email",
 	}
 
 	mateoSortColumns = []string{
@@ -28,9 +29,10 @@ var (
 )
 
 type Mateo struct {
-	ID         int64   `json:"mateo_id"`
-	FirstName  string  `json:"first_name"`
-	LastName   string  `json:"last_name"`
+	ID         int64  `json:"mateo_id"`
+	FirstName  string `json:"first_name"`
+	LastName   string `json:"last_name"`
+	Email      string `json:"email"`
 
 	// Fields for new sorting method
 	TotalAttended int64   `json:"total_attended"`
@@ -55,6 +57,9 @@ func NewMateoFromMap(row map[string]interface{}) (Mateo, error) {
 	}
 	if mateo.LastName, ok = row["last_name"].(string); !ok {
 		return mateo, fmt.Errorf("field=last_name type=string not in row=%v", row)
+	}
+	if mateo.Email, ok = row["email"].(string); !ok {
+		return mateo, fmt.Errorf("field=email type=string not in row=%v", row)
 	}
 	if mateo.TotalAttended, ok = row["total_attended"].(int64); !ok {
 		mateo.TotalAttended = 0
