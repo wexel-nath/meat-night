@@ -6,6 +6,10 @@ import (
 
 func Configure() {
 
+	// Service
+	viper.Set("COMPANY_NAME", "Mateo Corporation")
+	viper.Set("COMPANY_EMAIL", "nathanwelch_@hotmail.com")
+
 	// Heroku Port
 	viper.BindEnv("PORT")
 
@@ -36,4 +40,12 @@ func GetMailgunApiKey() string {
 
 func GetMailgunPublicKey() string {
 	return viper.GetString("MAILGUN_PUBLIC_KEY")
+}
+
+func GetCompanyName() string {
+	return viper.GetString("COMPANY_NAME")
+}
+
+func GetCompanyEmail() string {
+	return viper.GetString("COMPANY_EMAIL")
 }

@@ -1,6 +1,8 @@
 package email
 
 import (
+	"fmt"
+
 	"github.com/mailgun/mailgun-go"
 	"github.com/wexel-nath/meat-night/pkg/config"
 	"github.com/wexel-nath/meat-night/pkg/logger"
@@ -17,7 +19,8 @@ func ConfigureClient() {
 	client = mailgun.NewMailgun(domain, apiKey)
 }
 
-func Create(from, subject, text string, to ...string) *mailgun.Message {
+func Create(subject string, text string, to ...string) *mailgun.Message {
+	from := fmt.Sprintf("%s <%s>", config.GetCompanyName(), config.GetCompanyEmail())
 	return client.NewMessage(from, subject, text, to...)
 }
 
