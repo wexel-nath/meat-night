@@ -23,6 +23,6 @@ func Create(from, subject, text string, to ...string) *mailgun.Message {
 
 func Send(message *mailgun.Message) error {
 	resp, id, err := client.Send(message)
-	logger.Info("Email sent to Mailgun. resp=%s id=%s err=%s", resp, id, err.Error())
+	logger.Info("Email sent to Mailgun. resp=%s id=%s err=%v", resp, id, err)
 	return err
 }
