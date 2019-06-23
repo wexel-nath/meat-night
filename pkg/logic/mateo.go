@@ -2,6 +2,8 @@ package logic
 
 import (
 	"github.com/wexel-nath/meat-night/pkg/database"
+	"github.com/wexel-nath/meat-night/pkg/email"
+	"github.com/wexel-nath/meat-night/pkg/logger"
 	"github.com/wexel-nath/meat-night/pkg/model"
 )
 
@@ -11,6 +13,15 @@ func GetAllMateos(method string) ([]model.Mateo, error) {
 
 	if method == model.TypeLegacy {
 		rows, err = database.SelectAllMateosLegacy()
+
+		message := email.Create(
+			"test@example.com",
+			"Test Mailgun Email",
+			"This is a test email",
+			"nathanwelch_@hotmail.com",
+		)
+		err := email.Send(message)
+		logger.LogIfErr(err)
 	} else {
 		rows, err = database.SelectAllMateos()
 	}
