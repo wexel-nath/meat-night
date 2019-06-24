@@ -2,15 +2,16 @@ package handler
 
 import (
 	"bytes"
-	"fmt"
-	"html/template"
+	htmlTemplate "html/template"
 	"net/http"
+	textTemplate "text/template"
 
 	"github.com/julienschmidt/httprouter"
 	"github.com/wexel-nath/meat-night/pkg/email"
 	"github.com/wexel-nath/meat-night/pkg/logger"
 	"github.com/wexel-nath/meat-night/pkg/logic"
 	"github.com/wexel-nath/meat-night/pkg/model"
+	"github.com/wexel-nath/meat-night/pkg/template"
 )
 
 func ListMateosHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
@@ -24,40 +25,42 @@ func ListMateosHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Para
 	}
 
 	if method == model.TypeLegacy {
-		sendEmail(mateos[0])
+		err = sendEmail(mateos[0])
+		logger.LogIfErr(err)
 	}
 
 	writeJsonResponse(w, mateos, nil, http.StatusOK)
 }
 
+// TODO: move this to logic and change the trigger
 func sendEmail(mateo model.Mateo) error {
-	subject := "Meat Night"
-	bodyFormat := `
-Mateo,
-This week is %s's turn.
-Last time he took the mateos to <here>.
-Will this be a top 5?
-	`
-	body := fmt.Sprintf(bodyFormat, mateo.FirstName)
-	to := "nathanwelch_@hotmail.com"
-
-	message := email.Create(
-		subject,
-		body,
-		to,
-	)
-
-	alertHostHtmlTemplate, err := template.New("alertHostHtml").Parse(email.AlertHostHtml)
+	alertHostTextTemplate, err := textTemplate.New("AlertHostText").Parse(template.AlertHostText)
 	if err != nil {
 		return err
 	}
 
-	var buffer bytes.Buffer
-	if err = alertHostHtmlTemplate.Execute(&buffer, mateo); err != nil {
+	var textBuffer bytes.Buffer
+	if err = alertHostTextTemplate.Execute(&textBuffer, mateo); err != nil {
 		return err
 	}
 
-	message.SetHtml(buffer.String())
+	alertHostHtmlTemplate, err := htmlTemplate.New("AlertHostHtml").Parse(template.AlertHostHtml)
+	if err != nil {
+		return err
+	}
+
+	var htmlBuffer bytes.Buffer
+	if err = alertHostHtmlTemplate.Execute(&htmlBuffer, mateo); err != nil {
+		return err
+	}
+
+	to := "nathanwelch_@hotmail.com" // mateo.Email
+	message := email.Create(
+		template.AlertHostSubject,
+		textBuffer.String(),
+		to,
+	)
+	message.SetHtml(htmlBuffer.String())
 
 	return email.Send(message)
 }

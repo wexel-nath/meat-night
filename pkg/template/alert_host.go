@@ -1,4 +1,4 @@
-package email
+package template
 
 const AlertHostSubject = "Meat Night"
 
@@ -8,7 +8,6 @@ const AlertHostHtml = `
 	<h1>{{ .FirstName }},</h1>
 	<p>You're up for meat night this week.</p>
 	<p>Let everyone know if you can make it or not.</p>
-	<br />
 	<img src="https://i.ibb.co/yPQBzKc/15ead358-dddc-4e5d-a5c7-5a26ad86e469-200x200.png" alt="Mateo Corp Logo" />
 </html>
 `
