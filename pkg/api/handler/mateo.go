@@ -1,7 +1,9 @@
 package handler
 
 import (
+	"bytes"
 	"fmt"
+	"html/template"
 	"net/http"
 
 	"github.com/julienschmidt/httprouter"
@@ -28,7 +30,7 @@ func ListMateosHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Para
 	writeJsonResponse(w, mateos, nil, http.StatusOK)
 }
 
-func sendEmail(mateo model.Mateo) {
+func sendEmail(mateo model.Mateo) error {
 	subject := "Meat Night"
 	bodyFormat := `
 Mateo,
@@ -44,6 +46,18 @@ Will this be a top 5?
 		body,
 		to,
 	)
-	err := email.Send(message)
-	logger.LogIfErr(err)
+
+	alertHostHtmlTemplate, err := template.New("alertHostHtml").Parse(email.AlertHostHtml)
+	if err != nil {
+		return err
+	}
+
+	var buffer bytes.Buffer
+	if err = alertHostHtmlTemplate.Execute(&buffer, mateo); err != nil {
+		return err
+	}
+
+	message.SetHtml(buffer.String())
+
+	return email.Send(message)
 }
