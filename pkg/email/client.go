@@ -19,12 +19,12 @@ func ConfigureClient() {
 	client = mailgun.NewMailgun(domain, apiKey)
 }
 
-func Create(subject string, text string, to ...string) *mailgun.Message {
+func create(subject string, text string, to ...string) *mailgun.Message {
 	from := fmt.Sprintf("%s <%s>", config.GetCompanyName(), config.GetCompanyEmail())
 	return client.NewMessage(from, subject, text, to...)
 }
 
-func Send(message *mailgun.Message) error {
+func send(message *mailgun.Message) error {
 	resp, id, err := client.Send(message)
 	logger.Info("Email sent to Mailgun. resp=%s id=%s err=%v", resp, id, err)
 	return err
