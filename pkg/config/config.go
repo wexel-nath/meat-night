@@ -8,7 +8,7 @@ func Configure() {
 
 	// Service
 	viper.Set("COMPANY_NAME", "Mateo Corporation")
-	viper.Set("COMPANY_EMAIL", "nathan@mateocorp.com")
+	viper.Set("COMPANY_EMAIL", "nathan@sandboxe6fdb59d08044388adba57deaef6db42.mailgun.org")
 
 	// Heroku Port
 	viper.BindEnv("PORT")
