@@ -30,11 +30,11 @@ func SendAlertHostEmail(mateo model.Mateo) error {
 		return err
 	}
 
-	to := "nathanwelch_@hotmail.com" // mateo.Email
 	message := create(
 		template.AlertHostSubject,
 		textBuffer.String(),
-		to,
+		"nathanwelch_@hotmail.com",
+		//mateo.Email,
 	)
 	message.SetHtml(htmlBuffer.String())
 
