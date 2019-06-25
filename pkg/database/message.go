@@ -10,7 +10,7 @@ func InsertMessage(event string, mateoID int64) (map[string]interface{}, error) 
 	columns := model.GetMessageColumns()
 	query := `
 		INSERT INTO message (event, mateo_id)
-		($1, $2)
+		VALUES ($1, $2)
 		RETURNING ` + strings.Join(columns, ", ")
 
 	db := getConnection()
