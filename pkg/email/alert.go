@@ -34,7 +34,7 @@ func SendAlertHostEmail(mateo model.Mateo) error {
 		template.AlertHostSubject,
 		textBuffer.String(),
 		"nathanwelch_@hotmail.com",
-		//mateo.Email,
+		mateo.Email,
 	)
 	message.SetHtml(htmlBuffer.String())
 
