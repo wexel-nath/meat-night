@@ -22,12 +22,12 @@ func AlertHost() error {
 		return err
 	}
 	if len(messages) > 0 {
-		logger.Info(
-			"%s has received a %s message recently, not sending",
-			mateoToAlert.LastName,
-			model.TypeAlertHost,
-		)
-		return nil
+		//logger.Info(
+		//	"%s has received a %s message recently, not sending",
+		//	mateoToAlert.LastName,
+		//	model.TypeAlertHost,
+		//)
+		//return nil
 	}
 
 	err = email.SendAlertHostEmail(mateoToAlert)

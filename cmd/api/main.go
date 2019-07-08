@@ -14,7 +14,7 @@ import (
 func main() {
 	config.Configure()
 	initialize.MaybeInsertDinners()
-	email.ConfigureClient()
+	email.Configure()
 
 	startServer()
 }
