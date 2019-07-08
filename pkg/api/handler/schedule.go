@@ -19,32 +19,26 @@ func ScheduleHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params
 
 	logger.Info("Scheduling task %s", task)
 
+	var err error
+
 	switch task {
 	case "alert-host":
-		err := logic.AlertHost()
-		if err != nil {
-			logger.Error(err)
-			messages := []string { err.Error() }
-			writeJsonResponse(w, nil, messages, http.StatusInternalServerError)
-		} else {
-			writeJsonResponse(w, nil, nil, http.StatusOK)
-		}
-		return
+		err = logic.AlertHost()
 	case "alert-guests":
-		err := logic.AlertGuests()
-		if err != nil {
-			logger.Error(err)
-			messages := []string { err.Error() }
-			writeJsonResponse(w, nil, messages, http.StatusInternalServerError)
-		} else {
-			writeJsonResponse(w, nil, nil, http.StatusOK)
-		}
-		return
+		err = logic.AlertGuests()
 	default:
 		err := fmt.Errorf("task %s not found", task)
 		logger.Warn(err)
 		messages := []string{ err.Error() }
 		writeJsonResponse(w, nil, messages, http.StatusNotFound)
 		return
+	}
+
+	if err != nil {
+		logger.Error(err)
+		messages := []string { err.Error() }
+		writeJsonResponse(w, nil, messages, http.StatusInternalServerError)
+	} else {
+		writeJsonResponse(w, nil, nil, http.StatusOK)
 	}
 }

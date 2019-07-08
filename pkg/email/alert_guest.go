@@ -17,14 +17,7 @@ func SendAlertGuestEmail(mateo model.Mateo, hostName string) error {
 		return err
 	}
 
-	message := create(
-		AlertGuestSubject,
-		html,
-		text,
-		"nathanwelch_@hotmail.com",
-		//mateo.Email,
-	)
-
+	message := create(AlertGuestSubject, html, text, mateo.Email)
 	return send(message)
 }
 
@@ -33,7 +26,7 @@ func createAlertGuestEmail(name string, hostName string) (string, string, error)
 		Name: name,
 		Intros: []string{
 			fmt.Sprintf("%s is up for meat night this week.", hostName),
-			"Let him know if you will attend.",
+			"Let him know if you plan to attend.",
 		},
 	})
 }

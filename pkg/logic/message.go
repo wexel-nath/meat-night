@@ -33,7 +33,8 @@ func AlertGuests() error {
 	}
 
 	for _, mateo := range mateos {
-		if mateo.ID == hostMateo.ID {
+		// dont email the host or Jimbo
+		if mateo.ID == hostMateo.ID || mateo.FirstName == "James"{
 			continue
 		}
 

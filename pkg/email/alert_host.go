@@ -15,14 +15,7 @@ func SendAlertHostEmail(mateo model.Mateo) error {
 		return err
 	}
 
-	message := create(
-		AlertHostSubject,
-		html,
-		text,
-		"nathanwelch_@hotmail.com",
-		//mateo.Email,
-	)
-
+	message := create(AlertHostSubject, html, text, mateo.Email)
 	return send(message)
 }
 
@@ -31,7 +24,7 @@ func createAlertHostEmail(name string) (string, string, error) {
 		Name: name,
 		Intros: []string{
 			"You're up for meat night this week!",
-			"Let everyone know if you can make it or not.",
+			"Let everyone know if you can make it.",
 		},
 	})
 }
