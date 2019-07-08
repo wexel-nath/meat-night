@@ -1,6 +1,8 @@
 package email
 
 import (
+	"fmt"
+
 	"github.com/matcornic/hermes/v2"
 	"github.com/wexel-nath/meat-night/pkg/model"
 )
@@ -9,8 +11,8 @@ const (
 	AlertGuestSubject = "Meat Night"
 )
 
-func SendAlertGuestEmail(mateo model.Mateo) error {
-	html, text, err := createAlertGuestEmail(mateo.FirstName)
+func SendAlertGuestEmail(mateo model.Mateo, hostName string) error {
+	html, text, err := createAlertGuestEmail(mateo.FirstName, hostName)
 	if err != nil {
 		return err
 	}
@@ -26,11 +28,11 @@ func SendAlertGuestEmail(mateo model.Mateo) error {
 	return send(message)
 }
 
-func createAlertGuestEmail(name string) (string, string, error) {
+func createAlertGuestEmail(name string, hostName string) (string, string, error) {
 	return build(hermes.Body{
 		Name: name,
 		Intros: []string{
-			"<Mateo> is up for meat night this week.",
+			fmt.Sprintf("%s is up for meat night this week.", hostName),
 			"Let him know if you will attend.",
 		},
 	})

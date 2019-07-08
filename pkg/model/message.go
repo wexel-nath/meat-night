@@ -7,6 +7,7 @@ import (
 
 const (
 	TypeAlertHost = "alert.host"
+	TypeAlertGuest = "alert.guest"
 )
 
 var (

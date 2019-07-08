@@ -12,37 +12,69 @@ func AlertHost() error {
 	if err != nil {
 		return err
 	}
-
 	mateoToAlert := mateos[0]
-	logger.Info("Sending %s a %s message", mateoToAlert.LastName, model.TypeAlertHost)
+
+	emailFunc := func() error {
+		return email.SendAlertHostEmail(mateoToAlert)
+	}
+	return maybeSendEmail(mateoToAlert.ID, model.TypeAlertHost, emailFunc)
+}
+
+func AlertGuests() error {
+	mateos, err := GetAllMateos(model.TypeLegacy)
+	if err != nil {
+		return err
+	}
+	hostMateo := mateos[0]
+
+	mateos, err = GetAllMateos("")
+	if err != nil {
+		return err
+	}
+
+	for _, mateo := range mateos {
+		if mateo.ID == hostMateo.ID {
+			continue
+		}
+
+		emailFunc := func() error {
+			return email.SendAlertGuestEmail(mateo, hostMateo.FirstName)
+		}
+		err = maybeSendEmail(mateo.ID, model.TypeAlertGuest, emailFunc)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func maybeSendEmail(mateoID int64, messageType string, emailFunc func() error) error {
+	logger.Info("Sending mateo[%d] a %s message", mateoID, messageType)
 
 	// check if mateo has received email recently
-	messages, err := GetRecentAlertHostMessagesForMateo(mateoToAlert.ID)
+	messages, err := getRecentMessagesForMateo(mateoID, messageType)
 	if err != nil {
 		return err
 	}
 	if len(messages) > 0 {
-		//logger.Info(
-		//	"%s has received a %s message recently, not sending",
-		//	mateoToAlert.LastName,
-		//	model.TypeAlertHost,
-		//)
-		//return nil
+		logger.Info("mateo[%d] has received a %s message recently, not sending", mateoID, messageType)
+		return nil
 	}
 
-	err = email.SendAlertHostEmail(mateoToAlert)
+	err = emailFunc()
 	if err != nil {
 		return err
 	}
 
-	_, err = database.InsertMessage(model.TypeAlertHost, mateoToAlert.ID)
+	_, err = database.InsertMessage(messageType, mateoID)
 	return err
 }
 
-func GetRecentAlertHostMessagesForMateo(mateoID int64) ([]model.Message, error) {
+func getRecentMessagesForMateo(mateoID int64, messageType string) ([]model.Message, error) {
 	messages := make([]model.Message, 0)
 
-	rows, err := database.SelectRecentMessagesForMateoEvent(model.TypeAlertHost, mateoID)
+	rows, err := database.SelectRecentMessagesForMateoEvent(messageType, mateoID)
 	if err != nil {
 		return messages, err
 	}
