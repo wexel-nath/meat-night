@@ -9,12 +9,14 @@ import (
 	"github.com/wexel-nath/meat-night/pkg/config"
 	"github.com/wexel-nath/meat-night/pkg/email"
 	"github.com/wexel-nath/meat-night/pkg/initialize"
+	"github.com/wexel-nath/meat-night/pkg/logic"
 )
 
 func main() {
 	config.Configure()
 	initialize.MaybeInsertDinners()
 	email.Configure()
+	logic.Configure()
 
 	startServer()
 }

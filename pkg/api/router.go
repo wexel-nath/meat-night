@@ -45,5 +45,10 @@ func getRoutes() []route {
 			pattern: "/schedule",
 			handler: handler.ScheduleHandler,
 		},
+		{
+			method:  http.MethodGet,
+			pattern: "/invite/host/:inviteID",
+			handler: handler.AcceptHostInviteHandler,
+		},
 	}
 }

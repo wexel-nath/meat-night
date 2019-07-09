@@ -9,6 +9,7 @@ func Configure() {
 	// Service
 	viper.Set("COMPANY_NAME", "Mateo Corporation")
 	viper.Set("COMPANY_EMAIL", "mateocorp@sandboxe6fdb59d08044388adba57deaef6db42.mailgun.org")
+	viper.Set("BASE_URL", "https://mateo-meat-night.herokuapp.com")
 
 	// Heroku Port
 	viper.BindEnv("PORT")
@@ -28,6 +29,10 @@ func GetPort() string {
 
 func GetDatabaseURL() string {
 	return viper.GetString("DATABASE_URL")
+}
+
+func GetBaseURL() string {
+	return viper.GetString("BASE_URL")
 }
 
 func GetMailgunDomain() string {

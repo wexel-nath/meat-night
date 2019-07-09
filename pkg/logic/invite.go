@@ -6,10 +6,12 @@ import (
 )
 
 func inviteHost(mateoID int64) (model.Invite, error) {
-	// create unique ID
-	uniqueID := "TEST-ID-1"
+	inviteID, err := generateUniqueID(mateoID)
+	if err != nil {
+		return model.Invite{}, err
+	}
 
-	row, err := database.InsertInvite(uniqueID, model.TypeInviteHost, mateoID, nil)
+	row, err := database.InsertInvite(inviteID, model.TypeInviteHost, mateoID, nil)
 	if err != nil {
 		return model.Invite{}, err
 	}
