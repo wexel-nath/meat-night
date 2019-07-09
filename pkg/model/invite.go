@@ -32,7 +32,7 @@ type Invite struct {
 	InviteType   string `json:"invite_type"`
 	InviteStatus string `json:"invite_status"`
 	MateoID      int64  `json:"mateo_id"`
-	DinnerID     *int64  `json:"dinner_id"`
+	DinnerID     int64  `json:"dinner_id"`
 }
 
 func NewInviteFromRow(row map[string]interface{}) (Invite, error) {
@@ -51,8 +51,8 @@ func NewInviteFromRow(row map[string]interface{}) (Invite, error) {
 	if invite.MateoID, ok = row["mateo_id"].(int64); !ok {
 		return invite, fmt.Errorf("field=mateo_id type=int64 not in row=%v", row)
 	}
-	if invite.DinnerID, ok = row["dinner_id"].(*int64); !ok {
-		return invite, fmt.Errorf("field=dinner_id type=int64 not in row=%v", row)
+	if invite.DinnerID, ok = row["dinner_id"].(int64); !ok {
+		invite.DinnerID = 0
 	}
 
 	return invite, nil
