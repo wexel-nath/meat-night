@@ -14,8 +14,13 @@ func AlertHost() error {
 	}
 	mateoToAlert := mateos[0]
 
+	invite, err := inviteHost(mateoToAlert.ID)
+	if err != nil {
+		return err
+	}
+
 	emailFunc := func() error {
-		return email.SendAlertHostEmail(mateoToAlert)
+		return email.SendAlertHostEmail(mateoToAlert, invite.InviteID)
 	}
 	return maybeSendEmail(mateoToAlert.ID, model.TypeAlertHost, emailFunc)
 }

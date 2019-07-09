@@ -17,3 +17,20 @@ func InsertInvite(inviteID string, inviteType string, mateoID int64, dinnerID *i
 	row := db.QueryRow(query, inviteID, inviteType, mateoID, dinnerID)
 	return scanRowToMap(row, columns)
 }
+
+func SelectMateoByInviteID(inviteID string) (map[string]interface{}, error) {
+	columns := model.GetMateoColumns()
+	query := `
+		SELECT
+			` +  strings.Join(columns, ", ") + `
+		FROM
+			mateo
+			JOIN invite USING (mateo_id)
+		WHERE
+			invite_id = $1
+	`
+
+	db := getConnection()
+	row := db.QueryRow(query, inviteID)
+	return scanRowToMap(row, columns)
+}

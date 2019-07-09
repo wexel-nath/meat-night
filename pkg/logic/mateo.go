@@ -35,3 +35,12 @@ func getMateosFromRows(rows []map[string]interface{}, err error) ([]model.Mateo,
 
 	return mateos, nil
 }
+
+func GetMateoByInviteID(inviteID string) (model.Mateo, error) {
+	row, err := database.SelectMateoByInviteID(inviteID)
+	if err != nil {
+		return model.Mateo{}, err
+	}
+
+	return model.NewMateoFromMap(row)
+}
