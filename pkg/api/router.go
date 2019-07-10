@@ -47,8 +47,23 @@ func getRoutes() []route {
 		},
 		{
 			method:  http.MethodGet,
-			pattern: "/invite/host/:inviteID",
+			pattern: "/host/:inviteID/accept",
 			handler: handler.AcceptHostInviteHandler,
+		},
+		{
+			method:  http.MethodGet,
+			pattern: "/host/:inviteID/decline",
+			handler: handler.DeclineHostInviteHandler,
+		},
+		{
+			method:  http.MethodGet,
+			pattern: "/guest/:inviteID/accept",
+			handler: handler.AcceptGuestInviteHandler,
+		},
+		{
+			method:  http.MethodGet,
+			pattern: "/guesst:inviteID/decline",
+			handler: handler.DeclineGuestInviteHandler,
 		},
 	}
 }

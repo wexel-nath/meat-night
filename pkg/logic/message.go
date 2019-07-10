@@ -55,6 +55,30 @@ func AlertGuests() error {
 	return nil
 }
 
+func alertGuestsForDinner(hostMateo model.Mateo) error {
+	mateos, err := GetAllMateosExceptHost(hostMateo.ID)
+	if err != nil {
+		return err
+	}
+
+	for _, mateo := range mateos {
+		// dont email Jimbo
+		if mateo.FirstName == "James"{
+			continue
+		}
+
+		emailFunc := func() error {
+			return email.SendAlertGuestEmail(mateo, hostMateo.FirstName)
+		}
+		err = maybeSendEmail(mateo.ID, model.TypeAlertGuest, emailFunc)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 func maybeSendEmail(mateoID int64, messageType string, emailFunc func() error) error {
 	logger.Info("Sending mateo[%d] a %s message", mateoID, messageType)
 

@@ -1,16 +1,19 @@
 package model
 
-import "fmt"
+import (
+	"fmt"
+	"time"
+)
 
 const (
 	// invite status types
-	TypeInvitePending  = "PENDING"
-	TypeInviteAccepted = "ACCEPTED"
-	TypeInviteDeclined = "DECLINED"
+	TypeInvitePending  = "pending"
+	TypeInviteAccepted = "accepted"
+	TypeInviteDeclined = "declined"
 
 	// invite types
-	TypeInviteHost  = "HOST"
-	TypeInviteGuest = "GUEST"
+	TypeInviteHost  = "host"
+	TypeInviteGuest = "guest"
 )
 
 var (
@@ -20,6 +23,7 @@ var (
 		"invite_status",
 		"mateo_id",
 		"dinner_id",
+		"timestamp",
 	}
 )
 
@@ -28,11 +32,12 @@ func GetInviteColumns() []string {
 }
 
 type Invite struct {
-	InviteID     string `json:"invite_id"`
-	InviteType   string `json:"invite_type"`
-	InviteStatus string `json:"invite_status"`
-	MateoID      int64  `json:"mateo_id"`
-	DinnerID     int64  `json:"dinner_id"`
+	InviteID     string    `json:"invite_id"`
+	InviteType   string    `json:"invite_type"`
+	InviteStatus string    `json:"invite_status"`
+	MateoID      int64     `json:"mateo_id"`
+	DinnerID     int64     `json:"dinner_id"`
+	Timestamp    time.Time `json:"timestamp"`
 }
 
 func NewInviteFromRow(row map[string]interface{}) (Invite, error) {
@@ -53,6 +58,9 @@ func NewInviteFromRow(row map[string]interface{}) (Invite, error) {
 	}
 	if invite.DinnerID, ok = row["dinner_id"].(int64); !ok {
 		invite.DinnerID = 0
+	}
+	if invite.Timestamp, ok = row["timestamp"].(time.Time); !ok {
+		return invite, fmt.Errorf("field=timestamp type=time.Time not in row=%v", row)
 	}
 
 	return invite, nil

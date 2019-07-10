@@ -73,3 +73,23 @@ func SelectAllMateosLegacy() ([]map[string]interface{}, error) {
 
 	return scanRowsToMap(rows, model.GetMateoSortLegacyColumns())
 }
+
+func SelectAllMateosExceptHost(hostID int64) ([]map[string]interface{}, error) {
+	columns := model.GetMateoColumns()
+	query := `
+		SELECT
+			` + strings.Join(columns, ", ") + `
+		FROM
+			mateo
+		WHERE
+			mateo_id <> $1
+	`
+
+	db := getConnection()
+	rows, err := db.Query(query, hostID)
+	if err != nil {
+		return nil, err
+	}
+
+	return scanRowsToMap(rows, columns)
+}

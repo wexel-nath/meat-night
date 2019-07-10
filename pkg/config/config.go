@@ -2,6 +2,7 @@ package config
 
 import (
 	"github.com/spf13/viper"
+	"time"
 )
 
 func Configure() {
@@ -9,7 +10,9 @@ func Configure() {
 	// Service
 	viper.Set("COMPANY_NAME", "Mateo Corporation")
 	viper.Set("COMPANY_EMAIL", "mateocorp@sandboxe6fdb59d08044388adba57deaef6db42.mailgun.org")
-	viper.Set("BASE_URL", "https://mateo-meat-night.herokuapp.com")
+	//viper.Set("BASE_URL", "https://mateo-meat-night.herokuapp.com")
+	viper.Set("BASE_URL", "http://localhost:4000")
+	viper.Set("DINNER_DAY", time.Wednesday)
 
 	// Heroku Port
 	viper.BindEnv("PORT")
@@ -33,6 +36,10 @@ func GetDatabaseURL() string {
 
 func GetBaseURL() string {
 	return viper.GetString("BASE_URL")
+}
+
+func GetDinnerDay() time.Weekday {
+	return time.Weekday(viper.GetInt("DINNER_DAY"))
 }
 
 func GetMailgunDomain() string {
