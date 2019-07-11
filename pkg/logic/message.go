@@ -25,74 +25,55 @@ func AlertHost() error {
 	return maybeSendEmail(mateoToAlert.ID, model.TypeAlertHost, emailFunc)
 }
 
-func AlertGuests() error {
-	mateos, err := GetAllMateos(model.TypeLegacy)
-	if err != nil {
-		return err
-	}
-	hostMateo := mateos[0]
+func alertGuestsForDinner(hostMateo model.Mateo, dinnerID int64) error {
+	logger.Info("Sending guest emails for mateo[%s] dinner", hostMateo.LastName)
 
-	mateos, err = GetAllMateos("")
+	guests, err := GetAllMateosExceptHost(hostMateo.ID)
 	if err != nil {
 		return err
 	}
 
-	for _, mateo := range mateos {
-		// dont email the host or Jimbo
-		if mateo.ID == hostMateo.ID || mateo.FirstName == "James"{
-			continue
-		}
-
-		emailFunc := func() error {
-			return email.SendAlertGuestEmail(mateo, hostMateo.FirstName)
-		}
-		err = maybeSendEmail(mateo.ID, model.TypeAlertGuest, emailFunc)
+	for _, guest := range guests {
+		err = sendAlertGuestEmail(guest, hostMateo.FirstName, dinnerID)
 		if err != nil {
-			return err
+			logger.Error(err)
 		}
 	}
 
 	return nil
 }
 
-func alertGuestsForDinner(hostMateo model.Mateo) error {
-	mateos, err := GetAllMateosExceptHost(hostMateo.ID)
+func sendAlertGuestEmail(guest model.Mateo, hostName string, dinnerID int64) error {
+	// dont email Jimbo
+	if guest.FirstName == "James"{
+		return nil
+	}
+
+	invite, err := inviteGuest(guest.ID, dinnerID)
 	if err != nil {
 		return err
 	}
 
-	for _, mateo := range mateos {
-		// dont email Jimbo
-		if mateo.FirstName == "James"{
-			continue
-		}
-
-		emailFunc := func() error {
-			return email.SendAlertGuestEmail(mateo, hostMateo.FirstName)
-		}
-		err = maybeSendEmail(mateo.ID, model.TypeAlertGuest, emailFunc)
-		if err != nil {
-			return err
-		}
+	emailFunc := func() error {
+		return email.SendAlertGuestEmail(guest, hostName, invite.InviteID)
 	}
-
-	return nil
+	return maybeSendEmail(guest.ID, model.TypeAlertGuest, emailFunc)
 }
 
 func maybeSendEmail(mateoID int64, messageType string, emailFunc func() error) error {
 	logger.Info("Sending mateo[%d] a %s message", mateoID, messageType)
 
 	// check if mateo has received email recently
-	messages, err := getRecentMessagesForMateo(mateoID, messageType)
-	if err != nil {
-		return err
-	}
-	if len(messages) > 0 {
-		logger.Info("mateo[%d] has received a %s message recently, not sending", mateoID, messageType)
-		return nil
-	}
+	//messages, err := getRecentMessagesForMateo(mateoID, messageType)
+	//if err != nil {
+	//	return err
+	//}
+	//if len(messages) > 0 {
+	//	logger.Info("mateo[%d] has received a %s message recently, not sending", mateoID, messageType)
+	//	return nil
+	//}
 
-	err = emailFunc()
+	err := emailFunc()
 	if err != nil {
 		return err
 	}

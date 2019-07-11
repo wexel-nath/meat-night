@@ -24,8 +24,6 @@ func ScheduleHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params
 	switch task {
 	case "alert-host":
 		err = logic.AlertHost()
-	case "alert-guests":
-		err = logic.AlertGuests()
 	default:
 		err := fmt.Errorf("task %s not found", task)
 		logger.Warn(err)

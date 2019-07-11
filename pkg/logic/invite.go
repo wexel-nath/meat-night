@@ -24,19 +24,18 @@ func inviteHost(mateoID int64) (model.Invite, error) {
 	return model.NewInviteFromRow(row)
 }
 
-func getUpcomingDinnerDate() (time.Time, error) {
-	now := time.Now()
-
-	today := now.Weekday()
-
-	dinnerDay := config.GetDinnerDay()
-
-	if today >= dinnerDay {
-		return now, fmt.Errorf("too late to invite a host. today[%s] dinnerDay[%s]", today.String(), dinnerDay.String())
+func inviteGuest(mateoID int64, dinnerID int64) (model.Invite, error) {
+	inviteID, err := generateUniqueID(mateoID)
+	if err != nil {
+		return model.Invite{}, err
 	}
 
-	dinnerDate := now.AddDate(0, 0, int(dinnerDay - today))
-	return dinnerDate, nil
+	row, err := database.InsertInvite(inviteID, model.TypeInviteHost, mateoID, &dinnerID)
+	if err != nil {
+		return model.Invite{}, err
+	}
+
+	return model.NewInviteFromRow(row)
 }
 
 func acceptInvite(inviteID string) (model.Invite, error) {
@@ -51,6 +50,8 @@ func acceptInvite(inviteID string) (model.Invite, error) {
 func AcceptHostInvite(inviteID string) error {
 
 	// todo: check if invite is pending & valid?
+	// accept needs to happen at least 8? hours before meat night
+
 	mateo, err := GetMateoByInviteID(inviteID)
 	if err != nil {
 		return err
@@ -60,16 +61,18 @@ func AcceptHostInvite(inviteID string) error {
 
 	// todo: get venue somehow!
 
-	// todo: get date of upcoming meat night
+	dinnerDate, err := getUpcomingDinnerDate()
+	if err != nil {
+		return err
+	}
 
-	// create dinner
 	d := model.Dinner{
-		Date:  "01-01-01",
+		Date:  dinnerDate.Format(model.DateFormat),
 		Venue: "PLACEHOLDER",
 		Host:  mateo.LastName,
 	}
 
-	_, err = CreateDinner(d)
+	dinner, err := CreateDinner(d)
 	if err != nil {
 		return err
 	}
@@ -80,7 +83,18 @@ func AcceptHostInvite(inviteID string) error {
 		return err
 	}
 
-	// invite other mateos to dinner
-	// todo: alert guests needs a dinner id for the invite link
-	return alertGuestsForDinner(mateo)
+	return alertGuestsForDinner(mateo, dinner.ID)
+}
+
+func getUpcomingDinnerDate() (time.Time, error) {
+	now := time.Now()
+	today := now.Weekday()
+	dinnerDay := config.GetDinnerDay()
+
+	if today > dinnerDay {
+		return now, fmt.Errorf("too late to invite a host. today[%s] dinnerDay[%s]", today.String(), dinnerDay.String())
+	}
+
+	dinnerDate := now.AddDate(0, 0, int(dinnerDay - today))
+	return dinnerDate, nil
 }
