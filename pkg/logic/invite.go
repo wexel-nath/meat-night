@@ -1,7 +1,6 @@
 package logic
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/wexel-nath/meat-night/pkg/config"
@@ -91,9 +90,9 @@ func getUpcomingDinnerDate() (time.Time, error) {
 	today := now.Weekday()
 	dinnerDay := config.GetDinnerDay()
 
-	if today > dinnerDay {
-		return now, fmt.Errorf("too late to invite a host. today[%s] dinnerDay[%s]", today.String(), dinnerDay.String())
-	}
+	//if today > dinnerDay {
+	//	return now, fmt.Errorf("too late to invite a host. today[%s] dinnerDay[%s]", today.String(), dinnerDay.String())
+	//}
 
 	dinnerDate := now.AddDate(0, 0, int(dinnerDay - today))
 	return dinnerDate, nil

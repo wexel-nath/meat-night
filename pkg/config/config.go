@@ -1,8 +1,9 @@
 package config
 
 import (
-	"github.com/spf13/viper"
 	"time"
+
+	"github.com/spf13/viper"
 )
 
 func Configure() {
@@ -10,19 +11,24 @@ func Configure() {
 	// Service
 	viper.Set("COMPANY_NAME", "Mateo Corporation")
 	viper.Set("COMPANY_EMAIL", "mateocorp@getwexel.com")
-	viper.Set("BASE_URL", "https://mateo-meat-night.herokuapp.com")
 	viper.Set("DINNER_DAY", time.Wednesday)
 
+	// Base url
+	viper.SetDefault("BASE_URL", "http://localhost:4000")
+	viper.BindEnv("BASE_URL")
+
 	// Heroku Port
+	viper.SetDefault("PORT", "4000")
 	viper.BindEnv("PORT")
 
 	// Postgres URL
+	viper.SetDefault("DATABASE_URL", "postgresql://nathanw:bonnie@localhost:5432/meat_night")
 	viper.BindEnv("DATABASE_URL")
 
 	// Mailgun
-	viper.BindEnv("WEXEL_MAILGUN_DOMAIN")
-	viper.BindEnv("WEXEL_MAILGUN_API_KEY")
-	viper.BindEnv("WEXEL_MAILGUN_PUBLIC_KEY")
+	viper.BindEnv("MAILGUN_DOMAIN")
+	viper.BindEnv("MAILGUN_API_KEY")
+	viper.BindEnv("MAILGUN_PUBLIC_KEY")
 }
 
 func GetPort() string {
@@ -38,7 +44,7 @@ func GetBaseURL() string {
 }
 
 func GetDinnerDay() time.Weekday {
-	return time.Weekday(viper.GetInt("DINNER_DAY"))
+	return viper.Get("DINNER_DAY").(time.Weekday)
 }
 
 func GetMailgunDomain() string {

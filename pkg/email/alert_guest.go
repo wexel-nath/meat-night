@@ -41,7 +41,7 @@ func createAlertGuestEmail(name string, hostName string, inviteID string) (strin
 				Button: hermes.Button{
 					Color:     "#EA4C25",
 					TextColor: "#ffffff",
-					Text:      "Making that commish",
+					Text:      "Busy making commish",
 					Link:      buildDeclineInviteLink(model.TypeInviteGuest, inviteID),
 				},
 			},

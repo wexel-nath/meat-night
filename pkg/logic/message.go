@@ -61,7 +61,7 @@ func sendAlertGuestEmail(guest model.Mateo, hostName string, dinnerID int64) err
 }
 
 func maybeSendEmail(mateoID int64, messageType string, emailFunc func() error) error {
-	logger.Info("Sending mateo[%d] a %s message", mateoID, messageType)
+	logger.Info("Sending mateo[%d] a message[%s]", mateoID, messageType)
 
 	// check if mateo has received email recently
 	//messages, err := getRecentMessagesForMateo(mateoID, messageType)
