@@ -2,30 +2,55 @@ package database
 
 import (
 	"strings"
+	"time"
 
 	"github.com/wexel-nath/meat-night/pkg/model"
 )
 
-func InsertInvite(inviteID string, inviteType string, mateoID int64, dinnerID *int64) (map[string]interface{}, error) {
+func InsertInvite(
+	inviteID string,
+	inviteType string,
+	mateoID int64,
+	dinnerID *int64,
+	dinnerDate *time.Time,
+) (map[string]interface{}, error) {
 	columns := model.GetInviteColumns()
 	query := `
 		INSERT INTO invite (
 			invite_id,
 			invite_type,
 			mateo_id,
-			dinner_id
+			dinner_id,
+			dinner_time
 		)
 		VALUES (
 			$1,
 			$2,
 			$3,
-			$4
+			$4,
+			$5
 		)
 		RETURNING
 			` + strings.Join(columns, ", ")
 
 	db := getConnection()
-	row := db.QueryRow(query, inviteID, inviteType, mateoID, dinnerID)
+	row := db.QueryRow(query, inviteID, inviteType, mateoID, dinnerID, dinnerDate)
+	return scanRowToMap(row, columns)
+}
+
+func SelectInviteByID(inviteID string) (map[string]interface{}, error) {
+	columns := model.GetInviteColumns()
+	query := `
+		SELECT
+			` + strings.Join(columns, ", ") + `
+		FROM
+			invite
+		WHERE
+			invite_id = $1
+	`
+
+	db := getConnection()
+	row := db.QueryRow(query, inviteID)
 	return scanRowToMap(row, columns)
 }
 
