@@ -14,31 +14,24 @@ func AcceptHostInviteHandler(w http.ResponseWriter, _ *http.Request, ps httprout
 	if err != nil {
 		logger.Error(err)
 		messages := []string { err.Error() }
-		writeJsonResponse(w, nil, messages, http.StatusUnprocessableEntity)
+		writeJsonResponse(w, nil, messages, http.StatusBadRequest)
 		return
 	}
 
-	writeJsonResponse(w, nil, nil, http.StatusCreated)
+	writeJsonResponse(w, nil, nil, http.StatusOK)
 }
 
 func DeclineHostInviteHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	inviteID := ps.ByName("inviteID")
-
-	mateo, err := logic.GetMateoByInviteID(inviteID)
+	err := logic.DeclineHostInvite(inviteID)
 	if err != nil {
 		logger.Error(err)
 		messages := []string { err.Error() }
-		writeJsonResponse(w, nil, messages, http.StatusUnprocessableEntity)
+		writeJsonResponse(w, nil, messages, http.StatusBadRequest)
 		return
 	}
 
-	// update invite record to 'declined'
-
-	// message the next in line to host
-
-	logger.Info("mateo[%s] declined the invite[%s] to host", mateo.LastName, inviteID)
-
-	writeJsonResponse(w, nil, nil, http.StatusCreated)
+	writeJsonResponse(w, nil, nil, http.StatusOK)
 }
 
 func AcceptGuestInviteHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {

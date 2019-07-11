@@ -1,9 +1,9 @@
 package logic
 
 import (
-	"errors"
 	"time"
 
+	"github.com/pkg/errors"
 	"github.com/wexel-nath/meat-night/pkg/config"
 	"github.com/wexel-nath/meat-night/pkg/database"
 	"github.com/wexel-nath/meat-night/pkg/logger"
@@ -68,14 +68,21 @@ func acceptInvite(inviteID string) (model.Invite, error) {
 	return model.NewInviteFromRow(row)
 }
 
-func AcceptHostInvite(inviteID string) error {
-	invite, err := getInviteByID(inviteID)
+func declineInvite(inviteID string) (model.Invite, error) {
+	row, err := database.UpdateInvite(inviteID, model.TypeInviteDeclined)
 	if err != nil {
-		return err
+		return model.Invite{}, err
 	}
 
-	if time.Until(invite.DinnerTime) < 6 * time.Hour {
-		return errors.New("it's too late to accept an invite to host")
+	return model.NewInviteFromRow(row)
+}
+
+func AcceptHostInvite(inviteID string) error {
+	logger.Info("host invite[%s] has been accepted", inviteID)
+
+	invite, err := validateInvite(getInviteByID(inviteID))
+	if err != nil {
+		return err
 	}
 
 	mateo, err := GetMateoByInviteID(inviteID)
@@ -83,17 +90,12 @@ func AcceptHostInvite(inviteID string) error {
 		return err
 	}
 
-	logger.Info("mateo[%s] accepted the invite[%s] to host", mateo.LastName, inviteID)
-
 	// todo: get venue somehow!
-
-	d := model.Dinner{
+	dinner, err := CreateDinner(model.Dinner{
 		Date:  invite.DinnerTime.Format(model.DateFormat),
 		Venue: "PLACEHOLDER",
 		Host:  mateo.LastName,
-	}
-
-	dinner, err := CreateDinner(d)
+	})
 	if err != nil {
 		return err
 	}
@@ -104,4 +106,55 @@ func AcceptHostInvite(inviteID string) error {
 	}
 
 	return alertGuestsForDinner(mateo, dinner.ID)
+}
+
+func DeclineHostInvite(inviteID string) error {
+	logger.Info("host invite[%s] has been accepted", inviteID)
+
+	_, err := validateInvite(getInviteByID(inviteID))
+	if err != nil {
+		return err
+	}
+
+	mateo, err := GetMateoByInviteID(inviteID)
+	if err != nil {
+		return err
+	}
+
+	_, err = declineInvite(inviteID)
+	if err != nil {
+		return err
+	}
+
+	_, err = inviteNextHost(mateo)
+	return err
+}
+
+func inviteNextHost(host model.Mateo) (model.Invite, error) {
+	mateos, err := GetAllMateos(model.TypeLegacy)
+	if err != nil {
+		return model.Invite{}, err
+	}
+
+	for index, mateo := range mateos {
+		if mateo.ID == host.ID && index < len(mateos) - 1 {
+			nextHost := mateos[index + 1]
+			return inviteHost(nextHost.ID)
+		}
+	}
+
+	return model.Invite{}, errors.New("cannot find a host to invite")
+}
+
+func validateInvite(invite model.Invite, err error) (model.Invite, error) {
+	if err != nil {
+		return invite, err
+	}
+	if invite.InviteStatus != model.TypeInvitePending {
+		return invite, model.ErrInviteHasResponse
+	}
+	if time.Until(invite.DinnerTime) < 6 * time.Hour {
+		return invite, model.ErrInviteLateResponse
+	}
+	return invite, nil
 }

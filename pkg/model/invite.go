@@ -1,6 +1,7 @@
 package model
 
 import (
+	"errors"
 	"fmt"
 	"time"
 )
@@ -25,6 +26,10 @@ var (
 		"dinner_id",
 		"dinner_time",
 	}
+
+	// Error Types
+	ErrInviteLateResponse = errors.New("it's too late to respond to an invite")
+	ErrInviteHasResponse = errors.New("this invite has already been responded to")
 )
 
 func GetInviteColumns() []string {

@@ -20,6 +20,7 @@ require (
 	github.com/mattn/go-runewidth v0.0.4 // indirect
 	github.com/onsi/ginkgo v1.8.0 // indirect
 	github.com/onsi/gomega v1.5.0 // indirect
+	github.com/pkg/errors v0.8.0
 	github.com/speps/go-hashids v2.0.0+incompatible
 	github.com/spf13/viper v1.4.0
 	github.com/stretchr/testify v1.3.0
