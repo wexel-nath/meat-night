@@ -17,7 +17,7 @@ func SendAlertGuestEmail(mateo model.Mateo, hostName string) error {
 		return err
 	}
 
-	message := create(AlertGuestSubject, html, text, mateo.Email)
+	message := create(AlertGuestSubject, html, text, "nathanwelch_@hotmail.com")
 	return send(message)
 }
 

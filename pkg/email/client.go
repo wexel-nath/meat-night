@@ -18,7 +18,7 @@ func Configure() {
 	builder = hermes.Hermes{
 		Product: hermes.Product{
 			Name: config.GetCompanyName(),
-			Logo: "https://i.ibb.co/yPQBzKc/15ead358-dddc-4e5d-a5c7-5a26ad86e469-200x200.png",
+			Logo: "https://i.ibb.co/8PTB7ZF/mateo-corp-transparent.png",
 			Copyright: "Copyright © 2019 Wexel Tech. All rights reserved.",
 		},
 	}
