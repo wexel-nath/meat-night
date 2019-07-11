@@ -6,6 +6,5 @@ CREATE TABLE IF NOT EXISTS invite (
   mateo_id      INTEGER     NOT NULL REFERENCES mateo(mateo_id),
   dinner_id     INTEGER     REFERENCES dinner(dinner_id),
   dinner_time   TIMESTAMP,
-  timestamp     TIMESTAMP   NOT NULL DEFAULT NOW(),
   UNIQUE (mateo_id, dinner_id)
 );

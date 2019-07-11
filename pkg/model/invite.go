@@ -24,7 +24,6 @@ var (
 		"mateo_id",
 		"dinner_id",
 		"dinner_time",
-		"timestamp",
 	}
 )
 
@@ -39,7 +38,6 @@ type Invite struct {
 	MateoID      int64     `json:"mateo_id"`
 	DinnerID     int64     `json:"dinner_id"`
 	DinnerTime   time.Time `json:"dinner_time"`
-	Timestamp    time.Time `json:"timestamp"`
 }
 
 func NewInviteFromRow(row map[string]interface{}) (Invite, error) {
@@ -63,9 +61,6 @@ func NewInviteFromRow(row map[string]interface{}) (Invite, error) {
 	}
 	if invite.DinnerTime, ok = row["dinner_time"].(time.Time); !ok {
 		invite.DinnerTime = time.Time{}
-	}
-	if invite.Timestamp, ok = row["timestamp"].(time.Time); !ok {
-		return invite, fmt.Errorf("field=timestamp type=time.Time not in row=%v", row)
 	}
 
 	return invite, nil
