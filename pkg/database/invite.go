@@ -12,7 +12,7 @@ func InsertInvite(
 	inviteType string,
 	mateoID int64,
 	dinnerID *int64,
-	dinnerDate *time.Time,
+	dinnerTime time.Time,
 ) (map[string]interface{}, error) {
 	columns := model.GetInviteColumns()
 	query := `
@@ -34,7 +34,7 @@ func InsertInvite(
 			` + strings.Join(columns, ", ")
 
 	db := getConnection()
-	row := db.QueryRow(query, inviteID, inviteType, mateoID, dinnerID, dinnerDate)
+	row := db.QueryRow(query, inviteID, inviteType, mateoID, dinnerID, dinnerTime)
 	return scanRowToMap(row, columns)
 }
 

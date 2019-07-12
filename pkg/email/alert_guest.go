@@ -34,7 +34,7 @@ func createAlertGuestEmail(name string, hostName string, inviteID string) (strin
 					Color:     "#22BC66",
 					TextColor: "#ffffff",
 					Text:      "I'm in!",
-					Link:      buildAcceptInviteLink(model.TypeAlertGuest, inviteID),
+					Link:      buildAcceptInviteLink(model.TypeInviteGuest, inviteID),
 				},
 			},
 			{

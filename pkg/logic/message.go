@@ -1,31 +1,36 @@
 package logic
 
 import (
+	"time"
+
 	"github.com/wexel-nath/meat-night/pkg/database"
 	"github.com/wexel-nath/meat-night/pkg/email"
 	"github.com/wexel-nath/meat-night/pkg/logger"
 	"github.com/wexel-nath/meat-night/pkg/model"
 )
 
-func AlertHost() error {
+func InviteHost() error {
 	mateos, err := GetAllMateos(model.TypeLegacy)
 	if err != nil {
 		return err
 	}
-	mateoToAlert := mateos[0]
 
-	invite, err := inviteHost(mateoToAlert.ID)
+	return inviteMateoToHost(mateos[0])
+}
+
+func inviteMateoToHost(mateo model.Mateo) error {
+	invite, err := createHostInvite(mateo.ID)
 	if err != nil {
 		return err
 	}
 
 	emailFunc := func() error {
-		return email.SendAlertHostEmail(mateoToAlert, invite.InviteID)
+		return email.SendAlertHostEmail(mateo, invite.InviteID)
 	}
-	return maybeSendEmail(mateoToAlert.ID, model.TypeAlertHost, emailFunc)
+	return maybeSendEmail(mateo.ID, model.TypeAlertHost, emailFunc)
 }
 
-func alertGuestsForDinner(hostMateo model.Mateo, dinnerID int64) error {
+func inviteGuests(hostMateo model.Mateo, dinnerID int64, dinnerTime time.Time) error {
 	logger.Info("Sending guest emails for mateo[%s] dinner", hostMateo.LastName)
 
 	guests, err := GetAllMateosExceptHost(hostMateo.ID)
@@ -34,7 +39,7 @@ func alertGuestsForDinner(hostMateo model.Mateo, dinnerID int64) error {
 	}
 
 	for _, guest := range guests {
-		err = sendAlertGuestEmail(guest, hostMateo.FirstName, dinnerID)
+		err = sendInviteGuestEmail(guest, hostMateo.FirstName, dinnerID, dinnerTime)
 		if err != nil {
 			logger.Error(err)
 		}
@@ -43,13 +48,13 @@ func alertGuestsForDinner(hostMateo model.Mateo, dinnerID int64) error {
 	return nil
 }
 
-func sendAlertGuestEmail(guest model.Mateo, hostName string, dinnerID int64) error {
+func sendInviteGuestEmail(guest model.Mateo, hostName string, dinnerID int64, dinnerTime time.Time) error {
 	// dont email Jimbo
 	if guest.FirstName == "James"{
 		return nil
 	}
 
-	invite, err := inviteGuest(guest.ID, dinnerID)
+	invite, err := createGuestInvite(guest.ID, dinnerID, dinnerTime)
 	if err != nil {
 		return err
 	}

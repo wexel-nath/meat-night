@@ -10,7 +10,7 @@ import (
 	"github.com/wexel-nath/meat-night/pkg/model"
 )
 
-func inviteHost(mateoID int64) (model.Invite, error) {
+func createHostInvite(mateoID int64) (model.Invite, error) {
 	inviteID, err := generateUniqueID(mateoID)
 	if err != nil {
 		return model.Invite{}, err
@@ -18,7 +18,7 @@ func inviteHost(mateoID int64) (model.Invite, error) {
 
 	nextDinnerTime := getNextDinnerTime(time.Now())
 
-	row, err := database.InsertInvite(inviteID, model.TypeInviteHost, mateoID, nil, &nextDinnerTime)
+	row, err := database.InsertInvite(inviteID, model.TypeInviteHost, mateoID, nil, nextDinnerTime)
 	if err != nil {
 		return model.Invite{}, err
 	}
@@ -36,13 +36,13 @@ func getNextDinnerTime(now time.Time) time.Time {
 	return time.Date(d.Year(), d.Month(), d.Day(), 19, 0, 0, 0, time.Local)
 }
 
-func inviteGuest(mateoID int64, dinnerID int64) (model.Invite, error) {
+func createGuestInvite(mateoID int64, dinnerID int64, dinnerTime time.Time) (model.Invite, error) {
 	inviteID, err := generateUniqueID(mateoID)
 	if err != nil {
 		return model.Invite{}, err
 	}
 
-	row, err := database.InsertInvite(inviteID, model.TypeInviteHost, mateoID, &dinnerID, nil)
+	row, err := database.InsertInvite(inviteID, model.TypeInviteGuest, mateoID, &dinnerID, dinnerTime)
 	if err != nil {
 		return model.Invite{}, err
 	}
@@ -106,11 +106,11 @@ func AcceptHostInvite(inviteID string) error {
 		return err
 	}
 
-	return alertGuestsForDinner(mateo, dinner.ID)
+	return inviteGuests(mateo, dinner.ID, invite.DinnerTime)
 }
 
 func DeclineHostInvite(inviteID string) error {
-	logger.Info("host invite[%s] has been accepted", inviteID)
+	logger.Info("host invite[%s] has been declined", inviteID)
 
 	_, err := validateInvite(getInviteByID(inviteID))
 	if err != nil {
@@ -127,24 +127,27 @@ func DeclineHostInvite(inviteID string) error {
 		return err
 	}
 
-	_, err = inviteNextHost(mateo)
-	return err
+	nextHost, err := findNextHost(mateo)
+	if err != nil {
+		return err
+	}
+
+	return inviteMateoToHost(nextHost)
 }
 
-func inviteNextHost(host model.Mateo) (model.Invite, error) {
+func findNextHost(host model.Mateo) (model.Mateo, error) {
 	mateos, err := GetAllMateos(model.TypeLegacy)
 	if err != nil {
-		return model.Invite{}, err
+		return model.Mateo{}, err
 	}
 
 	for index, mateo := range mateos {
 		if mateo.ID == host.ID && index < len(mateos) - 1 {
-			nextHost := mateos[index + 1]
-			return inviteHost(nextHost.ID)
+			return mateos[index + 1], nil
 		}
 	}
 
-	return model.Invite{}, errors.New("cannot find a host to invite")
+	return model.Mateo{}, errors.New("cannot find a host to invite")
 }
 
 func validateInvite(invite model.Invite, err error) (model.Invite, error) {
