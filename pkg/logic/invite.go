@@ -91,11 +91,12 @@ func AcceptHostInvite(inviteID string) error {
 	}
 
 	// todo: get venue somehow!
-	dinner, err := CreateDinner(model.Dinner{
-		Date:  invite.DinnerTime.Format(model.DateFormat),
-		Venue: "PLACEHOLDER",
-		Host:  mateo.LastName,
-	})
+	dinner, err := CreateDinner(
+		invite.DinnerTime.Format(model.DateFormat),
+		"PLACEHOLDER",
+		mateo.LastName,
+		nil,
+	)
 	if err != nil {
 		return err
 	}

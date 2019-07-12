@@ -42,7 +42,7 @@ func MaybeInsertDinners() {
 	}
 
 	for _, dinner := range dinners {
-		_, err = logic.CreateDinner(dinner)
+		_, err = logic.CreateDinner(dinner.Date, dinner.Venue, dinner.Host, dinner.Attended)
 		if err != nil {
 			logger.Error(err)
 			return
