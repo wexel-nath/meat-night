@@ -159,3 +159,37 @@ func validateInvite(invite model.Invite, err error) (model.Invite, error) {
 	}
 	return invite, nil
 }
+
+func AcceptGuestInvite(inviteID string) error {
+	logger.Info("guest invite[%s] has been accepted", inviteID)
+
+	invite, err := validateInvite(getInviteByID(inviteID))
+	if err != nil {
+		return err
+	}
+
+	mateo, err := GetMateoByInviteID(inviteID)
+	if err != nil {
+		return err
+	}
+
+	err = database.InsertGuest(invite.DinnerID, mateo.ID)
+	if err != nil {
+		return err
+	}
+
+	_, err = acceptInvite(inviteID)
+	return err
+}
+
+func DeclineGuestInvite(inviteID string) error {
+	logger.Info("guest invite[%s] has been declined", inviteID)
+
+	_, err := validateInvite(getInviteByID(inviteID))
+	if err != nil {
+		return err
+	}
+
+	_, err = declineInvite(inviteID)
+	return err
+}

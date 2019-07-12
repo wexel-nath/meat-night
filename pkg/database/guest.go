@@ -27,3 +27,14 @@ func InsertGuests(dinnerID int64, lastNames []string) ([]string, error) {
 
 	return scanSingleColumnToStringSlice(rows)
 }
+
+func InsertGuest(dinnerID int64, mateoID int64) error {
+	query := `
+		INSERT INTO guest (dinner_id, mateo_id)
+		VALUES ($1, $2)
+	`
+
+	db := getConnection()
+	_, err := db.Exec(query, dinnerID, mateoID)
+	return err
+}
