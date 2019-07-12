@@ -23,6 +23,8 @@ func Schedule(r *http.Request, _ httprouter.Params) (interface{}, int, error) {
 	switch task {
 	case "alert-host":
 		err = logic.InviteHost()
+	case "guest-list":
+		err = logic.GuestList()
 	default:
 		return nil, http.StatusNotFound, fmt.Errorf("task %s not found", task)
 	}

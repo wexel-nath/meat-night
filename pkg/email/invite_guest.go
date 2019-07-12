@@ -8,20 +8,20 @@ import (
 )
 
 const (
-	AlertGuestSubject = "Meat Night"
+	inviteGuestSubject = "Can you make it?"
 )
 
 func SendAlertGuestEmail(mateo model.Mateo, hostName string, inviteID string) error {
-	html, text, err := createAlertGuestEmail(mateo.FirstName, hostName, inviteID)
+	html, text, err := createInviteGuestEmail(mateo.FirstName, hostName, inviteID)
 	if err != nil {
 		return err
 	}
 
-	message := create(AlertGuestSubject, html, text, "nathanwelch_@hotmail.com")
+	message := create(inviteGuestSubject, html, text, "nathanwelch_@hotmail.com")
 	return send(message)
 }
 
-func createAlertGuestEmail(name string, hostName string, inviteID string) (string, string, error) {
+func createInviteGuestEmail(name string, hostName string, inviteID string) (string, string, error) {
 	return build(hermes.Body{
 		Name: name,
 		Intros: []string{

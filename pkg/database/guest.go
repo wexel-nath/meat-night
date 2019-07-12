@@ -38,3 +38,23 @@ func InsertGuest(dinnerID int64, mateoID int64) error {
 	_, err := db.Exec(query, dinnerID, mateoID)
 	return err
 }
+
+func SelectAllGuestsForDinner(dinnerID int64) ([]string, error) {
+	query := `
+		SELECT
+			first_name
+		FROM
+			mateo
+			JOIN guest USING (mateo_id)
+		WHERE
+			dinner_id = $1
+	`
+
+	db := getConnection()
+	rows, err := db.Query(query, dinnerID)
+	if err != nil {
+		return nil, err
+	}
+
+	return scanSingleColumnToStringSlice(rows)
+}

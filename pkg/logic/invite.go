@@ -1,6 +1,7 @@
 package logic
 
 import (
+	"github.com/wexel-nath/meat-night/pkg/email"
 	"time"
 
 	"github.com/pkg/errors"
@@ -95,7 +96,7 @@ func AcceptHostInvite(inviteID string) error {
 		invite.DinnerTime.Format(model.DateFormat),
 		"PLACEHOLDER",
 		mateo.LastName,
-		nil,
+		[]string{ mateo.LastName },
 	)
 	if err != nil {
 		return err
@@ -195,4 +196,25 @@ func DeclineGuestInvite(inviteID string) error {
 
 	_, err = declineInvite(inviteID)
 	return err
+}
+
+func GuestList() error {
+	dinners, err := GetAllDinners()
+	if err != nil {
+		return err
+	}
+
+	dinner := dinners[20]
+
+	mateo, err := GetMateoByLastName(dinner.Host)
+	if err != nil {
+		return err
+	}
+
+	guests, err := database.SelectAllGuestsForDinner(dinner.ID)
+	if err != nil {
+		return err
+	}
+
+	return email.SendGuestListEmail(mateo, guests)
 }

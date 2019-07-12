@@ -9,20 +9,20 @@ import (
 )
 
 const (
-	AlertHostSubject = "Meat Night"
+	inviteHostSubject = "You're up!"
 )
 
 func SendAlertHostEmail(mateo model.Mateo, inviteID string) error {
-	html, text, err := createAlertHostEmail(mateo.FirstName, inviteID)
+	html, text, err := createInviteHostEmail(mateo.FirstName, inviteID)
 	if err != nil {
 		return err
 	}
 
-	message := create(AlertHostSubject, html, text, "nathanwelch_@hotmail.com")
+	message := create(inviteHostSubject, html, text, "nathanwelch_@hotmail.com")
 	return send(message)
 }
 
-func createAlertHostEmail(name string, inviteID string) (string, string, error) {
+func createInviteHostEmail(name string, inviteID string) (string, string, error) {
 	return build(hermes.Body{
 		Name: name,
 		Intros: []string{

@@ -48,3 +48,12 @@ func GetMateoByInviteID(inviteID string) (model.Mateo, error) {
 func GetAllMateosExceptHost(hostID int64) ([]model.Mateo, error) {
 	return getMateosFromRows(database.SelectAllMateosExceptHost(hostID))
 }
+
+func GetMateoByLastName(lastName string) (model.Mateo, error) {
+	row, err := database.SelectMateoByLastName(lastName)
+	if err != nil {
+		return model.Mateo{}, err
+	}
+
+	return model.NewMateoFromMap(row)
+}
