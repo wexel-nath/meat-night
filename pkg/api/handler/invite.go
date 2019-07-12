@@ -8,66 +8,53 @@ import (
 	"github.com/wexel-nath/meat-night/pkg/logic"
 )
 
-func AcceptHostInviteHandler(w http.ResponseWriter, _ *http.Request, ps httprouter.Params) {
+// TODO: these handlers should return some html or redirect to a page
+
+func AcceptHostInvite(r *http.Request, ps httprouter.Params) (interface{}, int, error) {
 	inviteID := ps.ByName("inviteID")
 	err := logic.AcceptHostInvite(inviteID)
 	if err != nil {
-		logger.Error(err)
-		messages := []string { err.Error() }
-		writeJsonResponse(w, nil, messages, http.StatusBadRequest)
-		return
+		return nil, http.StatusBadRequest, err
 	}
 
-	writeJsonResponse(w, nil, nil, http.StatusOK)
+	return nil, http.StatusOK, nil
 }
 
-func DeclineHostInviteHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func DeclineHostInvite(r *http.Request, ps httprouter.Params) (interface{}, int, error) {
 	inviteID := ps.ByName("inviteID")
 	err := logic.DeclineHostInvite(inviteID)
 	if err != nil {
-		logger.Error(err)
-		messages := []string { err.Error() }
-		writeJsonResponse(w, nil, messages, http.StatusBadRequest)
-		return
+		return nil, http.StatusBadRequest, err
 	}
 
-	writeJsonResponse(w, nil, nil, http.StatusOK)
+	return nil, http.StatusOK, err
 }
 
-func AcceptGuestInviteHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func AcceptGuestInvite(_ *http.Request, ps httprouter.Params) (interface{}, int, error) {
 	inviteID := ps.ByName("inviteID")
 
 	mateo, err := logic.GetMateoByInviteID(inviteID)
 	if err != nil {
-		logger.Error(err)
-		messages := []string { err.Error() }
-		writeJsonResponse(w, nil, messages, http.StatusUnprocessableEntity)
-		return
+		return nil, http.StatusUnprocessableEntity, err
 	}
 
 	// update invite record to 'accepted'
-
 	// insert a guest entry
-
 	logger.Info("mateo[%s] accepted the invite[%s] to attend", mateo.LastName, inviteID)
 
-	writeJsonResponse(w, nil, nil, http.StatusCreated)
+	return nil, http.StatusOK, err
 }
 
-func DeclineGuestInviteHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func DeclineGuestInvite(_ *http.Request, ps httprouter.Params) (interface{}, int, error) {
 	inviteID := ps.ByName("inviteID")
 
 	mateo, err := logic.GetMateoByInviteID(inviteID)
 	if err != nil {
-		logger.Error(err)
-		messages := []string { err.Error() }
-		writeJsonResponse(w, nil, messages, http.StatusUnprocessableEntity)
-		return
+		return nil, http.StatusUnprocessableEntity, err
 	}
 
 	// update invite record to 'declined'
-
 	logger.Info("mateo[%s] declined the invite[%s] to attend", mateo.LastName, inviteID)
 
-	writeJsonResponse(w, nil, nil, http.StatusCreated)
+	return nil, http.StatusOK, err
 }

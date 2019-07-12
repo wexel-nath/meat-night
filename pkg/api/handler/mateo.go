@@ -4,20 +4,16 @@ import (
 	"net/http"
 
 	"github.com/julienschmidt/httprouter"
-	"github.com/wexel-nath/meat-night/pkg/logger"
 	"github.com/wexel-nath/meat-night/pkg/logic"
 )
 
-func ListMateosHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+func ListMateos(r *http.Request, ps httprouter.Params) (interface{}, int, error) {
 	method := r.URL.Query().Get("method")
 
 	mateos, err := logic.GetAllMateos(method)
 	if err != nil {
-		logger.Error(err)
-		messages := []string { err.Error() }
-		writeJsonResponse(w, mateos, messages, http.StatusInternalServerError)
-		return
+		return nil, http.StatusInternalServerError, err
 	}
 
-	writeJsonResponse(w, mateos, nil, http.StatusOK)
+	return mateos, http.StatusOK, nil
 }

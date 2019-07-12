@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 
@@ -9,12 +10,10 @@ import (
 	"github.com/wexel-nath/meat-night/pkg/logic"
 )
 
-func ScheduleHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+func Schedule(r *http.Request, _ httprouter.Params) (interface{}, int, error) {
 	task := r.URL.Query().Get("task")
 	if len(task) == 0 {
-		messages := []string { "task not provided" }
-		writeJsonResponse(w, nil, messages, http.StatusBadRequest)
-		return
+		return nil, http.StatusBadRequest, errors.New("task not provided")
 	}
 
 	logger.Info("Scheduling task %s", task)
@@ -25,18 +24,11 @@ func ScheduleHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params
 	case "alert-host":
 		err = logic.AlertHost()
 	default:
-		err := fmt.Errorf("task %s not found", task)
-		logger.Warn(err)
-		messages := []string{ err.Error() }
-		writeJsonResponse(w, nil, messages, http.StatusNotFound)
-		return
+		return nil, http.StatusNotFound, fmt.Errorf("task %s not found", task)
 	}
 
 	if err != nil {
-		logger.Error(err)
-		messages := []string { err.Error() }
-		writeJsonResponse(w, nil, messages, http.StatusInternalServerError)
-	} else {
-		writeJsonResponse(w, nil, nil, http.StatusOK)
+		return nil, http.StatusInternalServerError, err
 	}
+	return nil, http.StatusOK, nil
 }

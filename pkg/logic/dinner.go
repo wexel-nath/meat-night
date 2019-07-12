@@ -8,24 +8,24 @@ import (
 )
 
 // TODO: put these in a transaction so we can rollback if guests do not get inserted
-func CreateDinner(dinner model.Dinner) (model.Dinner, error) {
-	date, err := time.Parse(model.DateFormat, dinner.Date)
+func CreateDinner(date string, venue string, hostName string, attendeeNames []string) (model.Dinner, error) {
+	dateTime, err := time.Parse(model.DateFormat, date)
+	if err != nil {
+		return model.Dinner{}, err
+	}
+
+	row, err := database.InsertDinner(dateTime, venue, hostName)
+	if err != nil {
+		return model.Dinner{}, err
+	}
+
+	dinner, err := model.NewDinnerFromMap(row)
 	if err != nil {
 		return dinner, err
 	}
 
-	row, err := database.InsertDinner(date, dinner.Venue, dinner.Host)
-	if err != nil {
-		return dinner, err
-	}
-
-	newDinner, err := model.NewDinnerFromMap(row)
-	if err != nil {
-		return newDinner, err
-	}
-
-	newDinner.Attended, err = database.InsertGuests(newDinner.ID, dinner.Attended)
-	return newDinner, err
+	dinner.Attended, err = database.InsertGuests(dinner.ID, attendeeNames)
+	return dinner, err
 }
 
 func GetAllDinners() ([]model.Dinner, error) {

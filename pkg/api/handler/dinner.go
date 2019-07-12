@@ -6,37 +6,33 @@ import (
 	"net/http"
 
 	"github.com/julienschmidt/httprouter"
-	"github.com/wexel-nath/meat-night/pkg/logger"
 	"github.com/wexel-nath/meat-night/pkg/logic"
-	"github.com/wexel-nath/meat-night/pkg/model"
 )
 
-func CreateDinnerHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+func CreateDinner(r *http.Request, _ httprouter.Params) (interface{}, int, error) {
+	// todo: requires auth
+
 	body, err := ioutil.ReadAll(r.Body)
 	defer r.Body.Close()
 	if err != nil {
-		logger.Error(err)
-		messages := []string { err.Error() }
-		writeJsonResponse(w, nil, messages, http.StatusBadRequest)
-		return
+		return nil, http.StatusBadRequest, err
 	}
 
-	var dinner model.Dinner
-	err = json.Unmarshal(body, &dinner)
+	var request struct {
+		Date     string   `json:"date"`
+		Venue    string   `json:"venue"`
+		Host     string   `json:"host"`
+		Attended []string `json:"attended"`
+	}
+	err = json.Unmarshal(body, &request)
 	if err != nil {
-		logger.Error(err)
-		messages := []string { err.Error() }
-		writeJsonResponse(w, nil, messages, http.StatusBadRequest)
-		return
+		return nil, http.StatusBadRequest, err
 	}
 
-	newDinner, err := logic.CreateDinner(dinner)
+	dinner, err := logic.CreateDinner(request.Date, request.Venue, request.Host, request.Attended)
 	if err != nil {
-		logger.Error(err)
-		messages := []string { err.Error() }
-		writeJsonResponse(w, nil, messages, http.StatusUnprocessableEntity)
-		return
+		return nil, http.StatusUnprocessableEntity, err
 	}
 
-	writeJsonResponse(w, newDinner, nil, http.StatusCreated)
+	return dinner, http.StatusCreated, nil
 }

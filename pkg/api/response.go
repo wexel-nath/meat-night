@@ -1,9 +1,10 @@
-package handler
+package api
 
 import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/julienschmidt/httprouter"
 	"github.com/wexel-nath/meat-night/pkg/logger"
 )
 
@@ -34,4 +35,20 @@ func writeJsonResponse(
 	resp.Header().Set("Content-Type", "application/json")
 	resp.WriteHeader(status)
 	resp.Write(bytes)
+}
+
+type handleFunc func(r *http.Request, ps httprouter.Params) (interface{}, int, error)
+
+func requestHandler(handler handleFunc) httprouter.Handle {
+	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+		messages := make([]string, 0)
+
+		result, statusCode, err := handler(r, ps)
+		if err != nil {
+			logger.Error(err)
+			messages = []string{ err.Error() }
+		}
+
+		writeJsonResponse(w, result, messages, statusCode)
+	}
 }
