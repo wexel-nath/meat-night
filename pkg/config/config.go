@@ -13,6 +13,9 @@ func Configure() {
 	viper.Set("COMPANY_EMAIL", "mateocorp@getwexel.com")
 	viper.Set("DINNER_DAY", time.Wednesday)
 
+	// Giphy
+	viper.BindEnv("GIPHY_API_KEY")
+
 	// Base url
 	viper.SetDefault("BASE_URL", "http://localhost:4000")
 	viper.BindEnv("BASE_URL")
@@ -45,6 +48,10 @@ func GetBaseURL() string {
 
 func GetDinnerDay() time.Weekday {
 	return viper.Get("DINNER_DAY").(time.Weekday)
+}
+
+func GetGiphyApiKey() string {
+	return viper.GetString("GIPHY_API_KEY")
 }
 
 func GetMailgunDomain() string {

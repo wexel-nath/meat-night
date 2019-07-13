@@ -28,42 +28,42 @@ func getRoutes() []route {
 		{
 			method:  http.MethodGet,
 			pattern: "/healthz",
-			handler: requestHandler(handler.Healthz),
+			handler: jsonResponseHandler(handler.Healthz),
 		},
 		{
 			method:  http.MethodGet,
 			pattern: "/mateos",
-			handler: requestHandler(handler.ListMateos),
+			handler: jsonResponseHandler(handler.ListMateos),
 		},
 		{
 			method:  http.MethodPost,
 			pattern: "/dinner",
-			handler: requestHandler(handler.CreateDinner),
+			handler: jsonResponseHandler(handler.CreateDinner),
 		},
 		{
 			method:  http.MethodPost,
 			pattern: "/schedule",
-			handler: requestHandler(handler.Schedule),
+			handler: jsonResponseHandler(handler.Schedule),
 		},
 		{
 			method:  http.MethodGet,
 			pattern: "/host/:inviteID/accept",
-			handler: requestHandler(handler.AcceptHostInvite),
+			handler: giphyResponseHandler(handler.AcceptHostInvite),
 		},
 		{
 			method:  http.MethodGet,
 			pattern: "/host/:inviteID/decline",
-			handler: requestHandler(handler.DeclineHostInvite),
+			handler: giphyResponseHandler(handler.DeclineHostInvite),
 		},
 		{
 			method:  http.MethodGet,
 			pattern: "/guest/:inviteID/accept",
-			handler: requestHandler(handler.AcceptGuestInvite),
+			handler: giphyResponseHandler(handler.AcceptGuestInvite),
 		},
 		{
 			method:  http.MethodGet,
 			pattern: "/guest/:inviteID/decline",
-			handler: requestHandler(handler.DeclineGuestInvite),
+			handler: giphyResponseHandler(handler.DeclineGuestInvite),
 		},
 	}
 }
