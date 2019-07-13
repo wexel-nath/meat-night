@@ -1,7 +1,7 @@
 package email
 
 import (
-	"fmt"
+	"strings"
 
 	"github.com/matcornic/hermes/v2"
 	"github.com/wexel-nath/meat-night/pkg/model"
@@ -11,8 +11,8 @@ const (
 	guestListSubject = "Here's the guest list"
 )
 
-func SendGuestListEmail(host model.Mateo, guestNames []string) error {
-	html, text, err := createGuestListEmail(host.FirstName, guestNames)
+func SendGuestListEmail(host model.Mateo, invitees map[string][]string) error {
+	html, text, err := createGuestListEmail(host.FirstName, invitees)
 	if err != nil {
 		return err
 	}
@@ -21,31 +21,41 @@ func SendGuestListEmail(host model.Mateo, guestNames []string) error {
 	return send(message)
 }
 
-func createGuestListEmail(hostName string, guestNames []string) (string, string, error) {
-	entries := buildEntries(hostName, guestNames)
+func createGuestListEmail(hostName string, invitees map[string][]string) (string, string, error) {
 	return build(hermes.Body{
 		Name: hostName,
 		Intros: []string{
-			fmt.Sprintf("These %d legends will be attending", len(entries)),
+			"Here's who is coming to meat night this week",
 		},
-		Table: hermes.Table{
-			Data: entries,
-		},
+		Dictionary: buildGuestDictionary(invitees),
 	})
 }
 
-func buildEntries(hostName string, guestNames []string) [][]hermes.Entry {
-	entries := make([][]hermes.Entry, 0)
-	for _, name := range guestNames {
-		if name == hostName {
-			name = "You"
-		}
-		entries = append(entries, []hermes.Entry{
-			{ Value: name },
-		})
+func buildGuestDictionary(invitees map[string][]string) []hermes.Entry {
+	accepted := strings.Join(invitees["accepted"], ", ")
+	declined := strings.Join(invitees["declined"], ", ")
+	if declined == "" {
+		declined= "-"
+	}
+	pending := strings.Join(invitees["pending"], ", ")
+	if pending == "" {
+		pending= "-"
 	}
 
-	return entries
+	return []hermes.Entry{
+		{
+			Key:   "Attending",
+			Value: accepted,
+		},
+		{
+			Key:   "Unavailable",
+			Value: declined,
+		},
+		{
+			Key:   "Waiting for response",
+			Value: pending,
+		},
+	}
 }
 
 // TODO:

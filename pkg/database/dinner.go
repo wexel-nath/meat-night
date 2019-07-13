@@ -10,10 +10,13 @@ import (
 func SelectAllDinners() ([]map[string]interface{}, error) {
 	columns := model.GetDinnerColumns()
 	query := `
-		SELECT ` + strings.Join(columns, ", ") + `
-		FROM     dinner
+		SELECT
+			` + strings.Join(columns, ", ") + `
+		FROM
+			dinner
 			JOIN mateo USING (mateo_id)
-		ORDER BY date
+		ORDER BY
+			date
 	`
 
 	db := getConnection()
@@ -23,6 +26,25 @@ func SelectAllDinners() ([]map[string]interface{}, error) {
 	}
 
 	return scanRowsToMap(rows, columns)
+}
+
+func SelectLatestDinner() (map[string]interface{}, error) {
+	columns := model.GetDinnerColumns()
+	query := `
+		SELECT
+			` + strings.Join(columns, ", ") + `
+		FROM
+			dinner
+			JOIN mateo USING (mateo_id)
+		ORDER BY
+			date DESC
+		LIMIT
+			1
+	`
+
+	db := getConnection()
+	row := db.QueryRow(query)
+	return scanRowToMap(row, columns)
 }
 
 func InsertDinner(date time.Time, venue string, lastName string) (map[string]interface{}, error) {

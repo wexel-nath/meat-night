@@ -87,3 +87,23 @@ func UpdateInvite(inviteID string, inviteStatus string) (map[string]interface{},
 	row := db.QueryRow(query, inviteStatus, inviteID)
 	return scanRowToMap(row, columns)
 }
+
+func SelectAllInvitesForDinner(dinnerID int64) ([]map[string]interface{}, error) {
+	columns := model.GetInviteColumns()
+	query := `
+		SELECT
+			` + strings.Join(columns, ", ") + `
+		FROM
+			invite
+		WHERE
+			dinner_id = $1
+	`
+
+	db := getConnection()
+	rows, err := db.Query(query, dinnerID)
+	if err != nil {
+		return nil, err
+	}
+
+	return scanRowsToMap(rows, columns)
+}

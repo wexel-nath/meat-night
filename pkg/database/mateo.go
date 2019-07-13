@@ -22,6 +22,22 @@ func SelectMateoByLastName(lastName string) (map[string]interface{}, error) {
 	return scanRowToMap(row, columns)
 }
 
+func SelectMateoByID(mateoID int64) (map[string]interface{}, error) {
+	columns := model.GetMateoColumns()
+	query := `
+		SELECT
+			` + strings.Join(columns, ", ") + `
+		FROM
+			mateo
+		WHERE
+			mateo_id = $1
+	`
+
+	db := getConnection()
+	row := db.QueryRow(query, mateoID)
+	return scanRowToMap(row, columns)
+}
+
 func SelectAllMateos() ([]map[string]interface{}, error) {
 	columns := model.GetMateoSortColumns()
 	query := `

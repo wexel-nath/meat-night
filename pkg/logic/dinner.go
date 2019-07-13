@@ -46,3 +46,12 @@ func GetAllDinners() ([]model.Dinner, error) {
 
 	return dinners, nil
 }
+
+func GetLatestDinner() (model.Dinner, error) {
+	row, err := database.SelectLatestDinner()
+	if err != nil {
+		return model.Dinner{}, err
+	}
+
+	return model.NewDinnerFromMap(row)
+}

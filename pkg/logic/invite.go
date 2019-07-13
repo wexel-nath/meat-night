@@ -1,12 +1,12 @@
 package logic
 
 import (
-	"github.com/wexel-nath/meat-night/pkg/email"
 	"time"
 
 	"github.com/pkg/errors"
 	"github.com/wexel-nath/meat-night/pkg/config"
 	"github.com/wexel-nath/meat-night/pkg/database"
+	"github.com/wexel-nath/meat-night/pkg/email"
 	"github.com/wexel-nath/meat-night/pkg/logger"
 	"github.com/wexel-nath/meat-night/pkg/model"
 )
@@ -199,22 +199,51 @@ func DeclineGuestInvite(inviteID string) error {
 }
 
 func GuestList() error {
-	dinners, err := GetAllDinners()
+	dinner, err := GetLatestDinner()
 	if err != nil {
 		return err
 	}
-
-	dinner := dinners[20]
 
 	mateo, err := GetMateoByLastName(dinner.Host)
 	if err != nil {
 		return err
 	}
 
-	guests, err := database.SelectAllGuestsForDinner(dinner.ID)
+	invites, err := getInvitesForDinner(dinner.ID)
 	if err != nil {
 		return err
 	}
 
-	return email.SendGuestListEmail(mateo, guests)
+	invitees := map[string][]string{
+		"accepted": { "You" },
+		"declined": {},
+		"pending":  {},
+	}
+	for _, invite :=  range invites {
+		invitedMateo, err := GetMateoByID(invite.MateoID)
+		if err != nil {
+			return err
+		}
+		invitees[invite.InviteStatus] = append(invitees[invite.InviteStatus], invitedMateo.FirstName)
+	}
+
+	return email.SendGuestListEmail(mateo, invitees)
+}
+
+func getInvitesForDinner(dinnerID int64) ([]model.Invite, error) {
+	rows, err := database.SelectAllInvitesForDinner(dinnerID)
+	if err != nil {
+		return nil, err
+	}
+
+	invites := make([]model.Invite, 0)
+	for _, row := range rows {
+		invite, err := model.NewInviteFromRow(row)
+		if err != nil {
+			return invites, err
+		}
+		invites = append(invites, invite)
+	}
+
+	return invites, nil
 }

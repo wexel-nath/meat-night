@@ -57,3 +57,12 @@ func GetMateoByLastName(lastName string) (model.Mateo, error) {
 
 	return model.NewMateoFromMap(row)
 }
+
+func GetMateoByID(mateoID int64) (model.Mateo, error) {
+	row, err := database.SelectMateoByID(mateoID)
+	if err != nil {
+		return model.Mateo{}, err
+	}
+
+	return model.NewMateoFromMap(row)
+}

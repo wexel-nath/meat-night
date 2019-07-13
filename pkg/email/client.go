@@ -18,9 +18,10 @@ func Configure() {
 	builder = hermes.Hermes{
 		Product: hermes.Product{
 			Name: config.GetCompanyName(),
-			Logo: "https://i.ibb.co/8PTB7ZF/mateo-corp-transparent.png",
+			Logo: "https://i.ibb.co/0K5wQLf/mateo-corp-grey-text.png",
 			Copyright: "Copyright © 2019 Wexel Tech. All rights reserved.",
 		},
+		Theme: new(hermes.Flat),
 	}
 
 	domain := config.GetMailgunDomain()
