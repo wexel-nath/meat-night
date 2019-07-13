@@ -17,7 +17,7 @@ func SendGuestListEmail(host model.Mateo, invitees map[string][]string) error {
 		return err
 	}
 
-	message := create(guestListSubject, html, text, "nathanwelch_@hotmail.com")
+	message := create(guestListSubject, html, text, host.Email)
 	return send(message)
 }
 

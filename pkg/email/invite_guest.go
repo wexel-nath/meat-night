@@ -17,7 +17,7 @@ func SendAlertGuestEmail(mateo model.Mateo, hostName string, inviteID string) er
 		return err
 	}
 
-	message := create(inviteGuestSubject, html, text, "nathanwelch_@hotmail.com")
+	message := create(inviteGuestSubject, html, text, mateo.Email)
 	return send(message)
 }
 

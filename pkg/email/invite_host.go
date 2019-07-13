@@ -18,7 +18,7 @@ func SendAlertHostEmail(mateo model.Mateo, inviteID string) error {
 		return err
 	}
 
-	message := create(inviteHostSubject, html, text, "nathanwelch_@hotmail.com")
+	message := create(inviteHostSubject, html, text, mateo.Email)
 	return send(message)
 }
 
