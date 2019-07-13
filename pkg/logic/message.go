@@ -9,7 +9,7 @@ import (
 	"github.com/wexel-nath/meat-night/pkg/model"
 )
 
-func InviteHost() error {
+func SendInviteHostEmail() error {
 	mateos, err := GetAllMateos(model.TypeLegacy)
 	if err != nil {
 		return err
@@ -27,7 +27,7 @@ func inviteMateoToHost(mateo model.Mateo) error {
 	emailFunc := func() error {
 		return email.SendAlertHostEmail(mateo, invite.InviteID)
 	}
-	return maybeSendEmail(mateo.ID, model.TypeAlertHost, emailFunc)
+	return maybeSendEmail(mateo.ID, model.TypeInviteHost, emailFunc, false)
 }
 
 func inviteGuests(hostMateo model.Mateo, dinnerID int64, dinnerTime time.Time) error {
@@ -62,21 +62,59 @@ func sendInviteGuestEmail(guest model.Mateo, hostName string, dinnerID int64, di
 	emailFunc := func() error {
 		return email.SendAlertGuestEmail(guest, hostName, invite.InviteID)
 	}
-	return maybeSendEmail(guest.ID, model.TypeAlertGuest, emailFunc)
+	return maybeSendEmail(guest.ID, model.TypeInviteGuest, emailFunc, false)
 }
 
-func maybeSendEmail(mateoID int64, messageType string, emailFunc func() error) error {
+func SendGuestListEmail(forceSend bool) error {
+	dinner, err := GetLatestDinner()
+	if err != nil {
+		return err
+	}
+
+	mateo, err := GetMateoByLastName(dinner.Host)
+	if err != nil {
+		return err
+	}
+
+	invites, err := getInvitesForDinner(dinner.ID)
+	if err != nil {
+		return err
+	}
+
+	invitees := map[string][]string{
+		"accepted": { "You" },
+		"declined": {},
+		"pending":  {},
+	}
+	for _, invite :=  range invites {
+		invitedMateo, err := GetMateoByID(invite.MateoID)
+		if err != nil {
+			return err
+		}
+		invitees[invite.InviteStatus] = append(invitees[invite.InviteStatus], invitedMateo.FirstName)
+	}
+
+	emailFunc := func() error {
+		return email.SendGuestListEmail(mateo, invitees)
+	}
+
+	return maybeSendEmail(mateo.ID, model.TypeGuestList, emailFunc, forceSend)
+}
+
+func maybeSendEmail(mateoID int64, messageType string, emailFunc func() error, force bool) error {
 	logger.Info("Sending mateo[%d] a message[%s]", mateoID, messageType)
 
-	// check if mateo has received email recently
-	//messages, err := getRecentMessagesForMateo(mateoID, messageType)
-	//if err != nil {
-	//	return err
-	//}
-	//if len(messages) > 0 {
-	//	logger.Info("mateo[%d] has received a %s message recently, not sending", mateoID, messageType)
-	//	return nil
-	//}
+	if !force {
+		//check if mateo has received email recently
+		messages, err := getRecentMessagesForMateo(mateoID, messageType)
+		if err != nil {
+			return err
+		}
+		if len(messages) > 0 {
+			logger.Info("mateo[%d] has received a %s message recently, not sending", mateoID, messageType)
+			return nil
+		}
+	}
 
 	err := emailFunc()
 	if err != nil {

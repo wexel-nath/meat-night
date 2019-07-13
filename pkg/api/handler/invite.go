@@ -5,6 +5,7 @@ import (
 
 	"github.com/julienschmidt/httprouter"
 	"github.com/wexel-nath/meat-night/pkg/logic"
+	"github.com/wexel-nath/meat-night/pkg/model"
 )
 
 // TODO: these handlers should return some html or redirect to a page
@@ -31,7 +32,7 @@ func DeclineHostInvite(r *http.Request, ps httprouter.Params) (interface{}, int,
 
 func AcceptGuestInvite(_ *http.Request, ps httprouter.Params) (interface{}, int, error) {
 	inviteID := ps.ByName("inviteID")
-	err := logic.AcceptGuestInvite(inviteID)
+	err := logic.RespondToGuestInvite(inviteID, model.TypeInviteAccepted)
 	if err != nil {
 		return nil, http.StatusUnprocessableEntity, err
 	}
@@ -41,7 +42,7 @@ func AcceptGuestInvite(_ *http.Request, ps httprouter.Params) (interface{}, int,
 
 func DeclineGuestInvite(_ *http.Request, ps httprouter.Params) (interface{}, int, error) {
 	inviteID := ps.ByName("inviteID")
-	err := logic.DeclineGuestInvite(inviteID)
+	err := logic.RespondToGuestInvite(inviteID, model.TypeInviteDeclined)
 	if err != nil {
 		return nil, http.StatusUnprocessableEntity, err
 	}

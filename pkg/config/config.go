@@ -22,7 +22,7 @@ func Configure() {
 	viper.BindEnv("PORT")
 
 	// Postgres URL
-	viper.SetDefault("DATABASE_URL", "postgresql://nathanw:bonnie@localhost:5432/meat_night")
+	viper.SetDefault("DATABASE_URL", "host='localhost' port='5432' user='nathanw' password='bonnie' database='meat_night'")
 	viper.BindEnv("DATABASE_URL")
 
 	// Mailgun

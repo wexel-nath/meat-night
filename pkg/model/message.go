@@ -5,11 +5,6 @@ import (
 	"time"
 )
 
-const (
-	TypeAlertHost = "alert.host"
-	TypeAlertGuest = "alert.guest"
-)
-
 var (
 	messageColumns = []string{
 		"message_id",

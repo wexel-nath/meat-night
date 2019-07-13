@@ -6,7 +6,6 @@ import (
 	"github.com/pkg/errors"
 	"github.com/wexel-nath/meat-night/pkg/config"
 	"github.com/wexel-nath/meat-night/pkg/database"
-	"github.com/wexel-nath/meat-night/pkg/email"
 	"github.com/wexel-nath/meat-night/pkg/logger"
 	"github.com/wexel-nath/meat-night/pkg/model"
 )
@@ -164,70 +163,49 @@ func validateInvite(invite model.Invite, err error) (model.Invite, error) {
 	return invite, nil
 }
 
-func AcceptGuestInvite(inviteID string) error {
-	logger.Info("guest invite[%s] has been accepted", inviteID)
+func RespondToGuestInvite(inviteID string, response string) error {
+	logger.Info("guest invite[%s] has been %s", inviteID, response)
 
 	invite, err := validateInvite(getInviteByID(inviteID))
 	if err != nil {
 		return err
 	}
 
-	mateo, err := GetMateoByInviteID(inviteID)
-	if err != nil {
-		return err
-	}
-
-	err = database.InsertGuest(invite.DinnerID, mateo.ID)
-	if err != nil {
-		return err
-	}
-
-	_, err = acceptInvite(inviteID)
-	return err
-}
-
-func DeclineGuestInvite(inviteID string) error {
-	logger.Info("guest invite[%s] has been declined", inviteID)
-
-	_, err := validateInvite(getInviteByID(inviteID))
-	if err != nil {
-		return err
-	}
-
-	_, err = declineInvite(inviteID)
-	return err
-}
-
-func GuestList() error {
-	dinner, err := GetLatestDinner()
-	if err != nil {
-		return err
-	}
-
-	mateo, err := GetMateoByLastName(dinner.Host)
-	if err != nil {
-		return err
-	}
-
-	invites, err := getInvitesForDinner(dinner.ID)
-	if err != nil {
-		return err
-	}
-
-	invitees := map[string][]string{
-		"accepted": { "You" },
-		"declined": {},
-		"pending":  {},
-	}
-	for _, invite :=  range invites {
-		invitedMateo, err := GetMateoByID(invite.MateoID)
+	if response == model.TypeInviteAccepted {
+		mateo, err := GetMateoByInviteID(inviteID)
 		if err != nil {
 			return err
 		}
-		invitees[invite.InviteStatus] = append(invitees[invite.InviteStatus], invitedMateo.FirstName)
+
+		err = database.InsertGuest(invite.DinnerID, mateo.ID)
+		if err != nil {
+			return err
+		}
 	}
 
-	return email.SendGuestListEmail(mateo, invitees)
+	_, err = database.UpdateInvite(inviteID, response)
+	if err != nil {
+		return err
+	}
+
+	invites, err := getInvitesForDinner(invite.DinnerID)
+	if err != nil {
+		return err
+	}
+	if !hasPendingInvites(invites) {
+		return SendGuestListEmail(true)
+	}
+
+	return nil
+}
+
+func hasPendingInvites(invites []model.Invite) bool {
+	for _, invite := range invites {
+		if invite.InviteStatus == model.TypeInvitePending {
+			return true
+		}
+	}
+	return false
 }
 
 func getInvitesForDinner(dinnerID int64) ([]model.Invite, error) {

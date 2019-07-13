@@ -15,6 +15,8 @@ const (
 	// invite types
 	TypeInviteHost  = "host"
 	TypeInviteGuest = "guest"
+
+	TypeGuestList = "guest.list"
 )
 
 var (
