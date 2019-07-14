@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/wexel-nath/meat-night/pkg/database"
+	"github.com/wexel-nath/meat-night/pkg/logger"
 	"github.com/wexel-nath/meat-night/pkg/model"
 )
 
@@ -54,4 +55,9 @@ func GetLatestDinner() (model.Dinner, error) {
 	}
 
 	return model.NewDinnerFromMap(row)
+}
+
+func UpdateDinnerVenue(dinnerID int64, venue string) error {
+	logger.Info("Updating dinner[%d] with venue[%s]", dinnerID, venue)
+	return database.UpdateDinnerVenue(dinnerID, venue)
 }

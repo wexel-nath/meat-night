@@ -45,15 +45,14 @@ func writeJsonResponse(resp http.ResponseWriter, result interface{}, messages []
 	resp.Write(bytes)
 }
 
-type giphyHandlerFunc func(ps httprouter.Params) (string, error)
+type giphyHandlerFunc func(r *http.Request, ps httprouter.Params) (string, error)
 
 func giphyResponseHandler(handler giphyHandlerFunc) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		w.Header().Set("Content-Type", "text/html")
-		tag, err := handler(ps)
+		tag, err := handler(r, ps)
 		if err != nil {
 			logger.Error(err)
-			//tag = "something-went-wrong"
 		}
 
 		w.Write([]byte(buildGiphyHtml(tag)))

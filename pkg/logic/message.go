@@ -95,7 +95,7 @@ func SendGuestListEmail(forceSend bool) error {
 	}
 
 	emailFunc := func() error {
-		return email.SendGuestListEmail(mateo, invitees)
+		return email.SendGuestListEmail(mateo, dinner.ID, invitees)
 	}
 
 	return maybeSendEmail(mateo.ID, model.TypeGuestList, emailFunc, forceSend)

@@ -48,7 +48,7 @@ func getRoutes() []route {
 		{
 			method:  http.MethodGet,
 			pattern: "/host/:inviteID/accept",
-			handler: giphyResponseHandler(handler.AcceptHostInvite),
+			handler: giphyResponseHandler(handler.AcceptHostInvite), // don't serve giphy??
 		},
 		{
 			method:  http.MethodGet,
@@ -64,6 +64,16 @@ func getRoutes() []route {
 			method:  http.MethodGet,
 			pattern: "/guest/:inviteID/decline",
 			handler: giphyResponseHandler(handler.DeclineGuestInvite),
+		},
+		{
+			method:  http.MethodPost,
+			pattern: "/dinner/update",
+			handler: giphyResponseHandler(handler.UpdateVenue),
+		},
+		{
+			method:  http.MethodGet,
+			pattern: "/dinner/:dinnerID/update",
+			handler: handler.UpdateVenueForm,
 		},
 	}
 }

@@ -11,6 +11,7 @@ func Configure() {
 	// Service
 	viper.Set("COMPANY_NAME", "Mateo Corporation")
 	viper.Set("COMPANY_EMAIL", "mateocorp@getwexel.com")
+	viper.Set("COMPANY_LOGO", "https://i.ibb.co/0K5wQLf/mateo-corp-grey-text.png")
 	viper.Set("DINNER_DAY", time.Wednesday)
 
 	// Giphy
@@ -72,4 +73,8 @@ func GetCompanyName() string {
 
 func GetCompanyEmail() string {
 	return viper.GetString("COMPANY_EMAIL")
+}
+
+func GetCompanyLogo() string {
+	return viper.GetString("COMPANY_LOGO")
 }

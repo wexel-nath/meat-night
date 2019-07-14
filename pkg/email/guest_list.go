@@ -1,9 +1,11 @@
 package email
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/matcornic/hermes/v2"
+	"github.com/wexel-nath/meat-night/pkg/config"
 	"github.com/wexel-nath/meat-night/pkg/model"
 )
 
@@ -11,8 +13,8 @@ const (
 	guestListSubject = "Here's the guest list"
 )
 
-func SendGuestListEmail(host model.Mateo, invitees map[string][]string) error {
-	html, text, err := createGuestListEmail(host.FirstName, invitees)
+func SendGuestListEmail(host model.Mateo, dinnerID int64, invitees map[string][]string) error {
+	html, text, err := createGuestListEmail(host.FirstName, dinnerID, invitees)
 	if err != nil {
 		return err
 	}
@@ -21,13 +23,24 @@ func SendGuestListEmail(host model.Mateo, invitees map[string][]string) error {
 	return send(message)
 }
 
-func createGuestListEmail(hostName string, invitees map[string][]string) (string, string, error) {
+func createGuestListEmail(hostName string, dinnerID int64, invitees map[string][]string) (string, string, error) {
 	return build(hermes.Body{
 		Name: hostName,
 		Intros: []string{
 			"Here's who is coming to meat night this week",
 		},
 		Dictionary: buildGuestDictionary(invitees),
+		Actions: []hermes.Action{
+			{
+				Instructions: "Where are you taking the lads?",
+				Button: hermes.Button{
+					Color:     "#1D89EB",
+					TextColor: "#FFFFFF",
+					Text:      "Click here to enter a venue",
+					Link:      fmt.Sprintf("%s/dinner/%d/update", config.GetBaseURL(), dinnerID),
+				},
+			},
+		},
 	})
 }
 
@@ -57,12 +70,3 @@ func buildGuestDictionary(invitees map[string][]string) []hermes.Entry {
 		},
 	}
 }
-
-// TODO:
-// triggered via a cron && email has not been sent before
-// X people have accepted, Y people have declined, Z people haven't replied
-
-// triggered once everyone has replied
-// X people have accepted, Y people have declined
-//  => after each guest invite response
-//  => check pending invites for dinner id

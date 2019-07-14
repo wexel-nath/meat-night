@@ -58,12 +58,30 @@ func InsertDinner(date time.Time, venue string, lastName string) (map[string]int
 				LIMIT 1
 			RETURNING *
 		)
-		SELECT ` + strings.Join(columns, ", ") + `
-		FROM insert_dinner
-			JOIN mateo USING (mateo_id);
+		SELECT
+			` + strings.Join(columns, ", ") + `
+		FROM
+			insert_dinner
+			JOIN mateo USING (mateo_id)
 	`
 
 	db := getConnection()
 	row := db.QueryRow(query, date, venue, lastName)
 	return scanRowToMap(row, columns)
+}
+
+func UpdateDinnerVenue(dinnerID int64, venue string) error {
+	query := `
+		UPDATE
+			dinner
+		SET
+			venue = $2
+		WHERE
+			dinner_id = $1
+			AND venue = 'PLACEHOLDER'
+	`
+
+	db := getConnection()
+	_, err := db.Exec(query, dinnerID, venue)
+	return err
 }
