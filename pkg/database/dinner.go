@@ -37,7 +37,8 @@ func SelectLatestDinner() (map[string]interface{}, error) {
 			dinner
 			JOIN mateo USING (mateo_id)
 		ORDER BY
-			date DESC
+			date DESC,
+			dinner_id DESC
 		LIMIT
 			1
 	`
